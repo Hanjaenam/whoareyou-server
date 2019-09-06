@@ -1,0 +1,7 @@
+{
+  "ext": "ts",
+  "verbose": true,
+  "watch:": ["src"],
+  "delay": "1000",
+  "ignore": ["node_modules"]
+}

@@ -1,0 +1,9 @@
+CREATE VIEW UserView (email, name, avatar, createdAt, updatedAt) 
+AS
+SELECT email, name, avatar, createdAt, updatedAt
+FROM User
+
+CREATE VIEW UserAuth (email, hash, salt)
+AS
+SELECT email, hex(hash), hex(salt)
+FROM User

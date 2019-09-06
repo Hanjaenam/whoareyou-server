@@ -1,0 +1,10 @@
+SHOW variables LIKE 'event%'
+
+SET GLOBAL event_scheduler = ON;
+
+CREATE
+EVENT evt_clean_not_active_user 
+  ON SCHEDULE EVERY 1 DAY 
+    STARTS date_format(date_add(now(),interval 1 day), '%Y-%m-%d 04:00:00')
+  DO
+    DELETE FROM User WHERE isActive = False AND createdAt < DATE_SUB(NOW(), INTERVAL 1 DAY)

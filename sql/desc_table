@@ -1,0 +1,76 @@
+CREATE TABLE User (
+  id        INT UNSIGNED AUTO_INCREMENT,
+  email     VARCHAR(320) UNIQUE NOT NULL,
+  name      CHAR(16) NOT NULL,
+  introduce VARCHAR(128) DEFAULT NULL,
+  avatar    TEXT DEFAULT NULL,
+  salt      CHAR(64) DEFAULT NULL,
+  hash      CHAR(64) DEFAULT NULL,
+  valid     BOOLEAN DEFAULT NULL,
+  secret    CHAR(8) DEFAULT NULL,
+  naverId   CHAR(8) DEFAULT NULL,
+  googleId  CHAR(24) DEFAULT NULL,
+  createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY(id)
+);
+
+CREATE TABLE Article (
+  id        INT UNSIGNED AUTO_INCREMENT,
+  title     VARCHAR(128) NOT NULL,
+  content   TEXT NOT NULL,
+  author    INT UNSIGNED,
+  createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY(id),
+  FOREIGN KEY(author) REFERENCES User(id) ON DELETE SET NULL
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE TABLE Follow (
+  fromUser  BINARY(16),
+  toUser    BINARY(16),
+  FOREIGN KEY(fromUser) REFERENCES User(id) ON DELETE SET NULL,
+  FOREIGN KEY(toUser) REFERENCES User(id) ON DELETE SET NULL
+);
+
+CREATE TABLE Tag (
+  id        BINARY(16),
+  article   BINARY(16),
+  name      VARCHAR(20) NOT NULL,
+  PRIMARY KEY(id),
+  FOREIGN KEY(article) REFERENCES Article(id) ON DELETE SET NULL
+);
+
+CREATE TABLE Favorite (
+  user    BINARY(16),
+  article BINARY(16),
+  FOREIGN KEY(user) REFERENCES User(id) ON DELETE SET NULL,
+  FOREIGN KEY(article) REFERENCES Article(id) ON DELETE SET NULL
+);
+
+CREATE TABLE Files (
+  article BINARY(16),
+  url     TEXT NOT NULL,
+  FOREIGN KEY(article) REFERENCES Article(id) ON DELETE SET NULL
+)
+
+CREATE TABLE Comment (
+  id        BINARY(16),
+  content   TEXT NOT NULL,
+  article   BINARY(16),
+  author    BINARY(16),
+  createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY(id),
+  FOREIGN KEY(author) REFERENCES User(id) ON DELETE SET NULL,
+  FOREIGN KEY(article) REFERENCES Article(id) ON DELETE SET NULL
+);

@@ -1,0 +1,27 @@
+{
+  "field": {
+    "id": {
+      "type": "INT",
+      "constraint": ["UNSIGNED", "AUTO_INCREMENT"]
+    },
+    "title": {
+      "type": "VARCHAR(128)",
+      "constraint": ["NOT NULL"]
+    },
+    "content": {
+      "type": "TEXT",
+      "constraint": ["NOT NULL"]
+    },
+    "author": {
+      "id": "UNSIGNED INT"
+    },
+    "createdAt": {
+      "type": "TIMESTAMP",
+      "constaint": ["NOT NULL", "DEFAULT CUREENT_TIEMSTAMP"]
+    }
+  },
+  "constraint": [
+    "PRIMARY KEY(id)",
+    "FORIEGN KEY(author) REFERENCES User(id) ON DELETE SET NULL"
+  ]
+}

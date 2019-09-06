@@ -1,0 +1,5 @@
+https://www.zerocho.com/category/NodeJS/post/593a487c2ed1da0018cff95d
+
+그래서 SHA-1보다 SHA-256 , SHA-512 등을 사용하도록 권장
+SHA-2는 SHA-1보다 길이가 길기 때문에 원래 값을 찾아내는데 시간이 더 오래 걸리므로 보안에 더 좋다
+MD5는 매우 취약하며, 최소한 SHA-256 이상 사용을 권장

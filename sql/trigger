@@ -1,0 +1,9 @@
+
+DELIMITER ;;
+CREATE TRIGGER generate_id 
+BEFORE INSERT ON Article, Comment, Tag
+FOR EACH ROW 
+BEGIN 
+	SET NEW.id = UNHEX(REPLACE(UUID(),'-',''));
+END
+;;
