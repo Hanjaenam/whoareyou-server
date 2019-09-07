@@ -10,11 +10,11 @@ import { QueryError } from 'mysql2';
 const router = express.Router();
 
 router.use(routes.auth, auth);
-// 1. Authorization Header - token 검사
+// ...authRequired : Authorization Header - token 검사
 router.use(routes.user, ...authRequired, user);
-// 1. Authorization Header - token 검사
+// ...authRequired : Authorization Header - token 검사
 // router.use(routes.follow, ...authRequired, follow);
-// 1. Authorization Header - token 검사
+// ...authRequired : Authorization Header - token 검사
 // router.use(routes.article, ...authRequired, article);
 
 router.use(

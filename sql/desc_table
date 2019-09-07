@@ -16,13 +16,19 @@ CREATE TABLE User (
 
 CREATE TABLE Article (
   id        INT UNSIGNED AUTO_INCREMENT,
-  title     VARCHAR(128) NOT NULL,
   content   TEXT NOT NULL,
   author    INT UNSIGNED,
   createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  favorite  INT UNSIGNED DEFAULT 0,
   PRIMARY KEY(id),
   FOREIGN KEY(author) REFERENCES User(id) ON DELETE SET NULL
 );
+
+CREATE TABLE Files (
+  article INT UNSIGNED,
+  url     TEXT NOT NULL,
+  FOREIGN KEY(article) REFERENCES Article(id) ON DELETE SET NULL
+)
 
 
 
@@ -57,12 +63,6 @@ CREATE TABLE Favorite (
   FOREIGN KEY(user) REFERENCES User(id) ON DELETE SET NULL,
   FOREIGN KEY(article) REFERENCES Article(id) ON DELETE SET NULL
 );
-
-CREATE TABLE Files (
-  article BINARY(16),
-  url     TEXT NOT NULL,
-  FOREIGN KEY(article) REFERENCES Article(id) ON DELETE SET NULL
-)
 
 CREATE TABLE Comment (
   id        BINARY(16),
