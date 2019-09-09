@@ -1,10 +1,10 @@
 import express from 'express';
 import routes from 'routes';
 import {
-  getOne,
+  // getOne,
   remove,
   patch,
-  getAll,
+  // getAll,
   getMe,
   patchAvatar,
   changePassword,

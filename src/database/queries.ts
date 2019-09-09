@@ -1,15 +1,15 @@
 import { dbQueryToStr } from 'utils';
 
-export const AUTH = {
-  VALIDATE_PASSWORD: (key: 'id' | 'email'): string =>
-    `select salt, hash FROM User WHERE ${key} = ?`,
-};
+export const PASSPORT_LOGIN =
+  'select hex(id) as id, email, name, valid, avatar, introduce, secret, naverId, googleId, createdAt, salt, hash FROM User WHERE email = ?';
 
 export const USER = {
-  GET_ALL: 'SELECT id, name, avatar, introduce FROM User',
+  GET_ALL: 'SELECT hex(id) as id, name, avatar, introduce FROM User',
 
   GET_ONE: (key: 'id' | 'email'): string =>
-    `SELECT id, email, name, valid, avatar, introduce, secret, naverId, googleId, createdAt FROM User WHERE ${key}=?`,
+    `SELECT hex(id) as id, email, name, valid, avatar, introduce, secret, naverId, googleId, createdAt FROM User WHERE ${
+      key === 'id' ? 'id = unhex(?)' : 'email = ?'
+    }`,
 
   CREATE: (avatar?: string): string =>
     `INSERT INTO User(email, name, salt, hash, secret ${
@@ -22,23 +22,19 @@ export const USER = {
   CREATE_NAVER:
     'INSERT INTO User(email, name, naverId, avatar) VALUES(?, ?, ?, ?)',
 
-  DELETE: 'DELETE FROM User WHERE id = ?',
+  DELETE: 'DELETE FROM User WHERE id = unhex(?)',
 
   PATCH: (obj: Record<string, any>): string =>
-    `UPDATE User SET ${dbQueryToStr(obj)} WHERE id = ?`,
-};
+    `UPDATE User SET ${dbQueryToStr(obj)} WHERE id = unhex(?)`,
 
-export const FOLLOW = {
-  CREATE: 'INSERT INTO Follow(fromUser, toUser) VALUES(?, ?)',
-
-  DELETE: 'DELETE FROM Follow WHERE fromUser=? AND toUser=?',
+  VALIDATE_PASSWORD: 'select salt, hash FROM User WHERE id = unhex(?)',
 };
 
 export const ARTICLE = {
-  GET_ALL: 'SELECT hex(id), title, author, createdAt FROM Article',
+  GET_ALL: 'SELECT hex(id) as id, title, author, createdAt FROM Article',
 
   GET_ONE:
-    'SELECT hex(id), title, content, author, createdAt FROM Article WHERE id = ?',
+    'SELECT hex(id) as id, title, content, author, createdAt FROM Article WHERE id = ?',
 
   CREATE: 'INSERT INTO Article(title, content, author) VALUES(?, ?, ?)',
 
@@ -49,6 +45,12 @@ export const ARTICLE = {
       title,
       content,
     })} WHERE id = unhex(?) AND author = ?`,
+};
+
+export const FOLLOW = {
+  CREATE: 'INSERT INTO Follow(fromUser, toUser) VALUES(?, ?)',
+
+  DELETE: 'DELETE FROM Follow WHERE fromUser=? AND toUser=?',
 };
 
 export const TAG = {

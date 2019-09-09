@@ -1,6 +1,6 @@
 import pool from 'database/pool';
 import { Request, Response, NextFunction } from 'express';
-import { AUTH } from 'database/queries';
+import { USER } from 'database/queries';
 import { ReqUser, ValidateUser } from 'types/app';
 import { validatePassword } from 'utils';
 
@@ -10,7 +10,7 @@ export const isValidPassword = (
   next: NextFunction,
 ): Promise<void> =>
   pool
-    .query(AUTH.VALIDATE_PASSWORD('id'), (req.user as ReqUser).id)
+    .query(USER.VALIDATE_PASSWORD, (req.user as ReqUser).id)
     .then(([rows]) => {
       const { prePassword } = req.body;
       const { hash, salt } = (rows as ValidateUser[])[0];
@@ -19,7 +19,7 @@ export const isValidPassword = (
         // 401 : 데이터를 보냈지만 틀림
         return res
           .status(403)
-          .json({ message: '비밀번호가 일치하지 않습니다.' })
+          .json({ message: '현재 비밀번호가 일치하지 않습니다.' })
           .end();
       }
       return next();

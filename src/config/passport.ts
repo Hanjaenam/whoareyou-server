@@ -4,8 +4,8 @@ import routes from 'routes';
 import { Strategy as LocalStrategy } from 'passport-local';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import { Strategy as NaverStrategy } from 'passport-naver';
-import { AUTH, USER } from 'database/queries';
-import { ValidateUser, User } from 'types/app';
+import { PASSPORT_LOGIN } from 'database/queries';
+import { PassportLogIn } from 'types/app';
 import { validatePassword } from 'utils';
 
 passport.use(
@@ -17,14 +17,13 @@ passport.use(
     },
     (email, password, done): void => {
       pool
-        .query(AUTH.VALIDATE_PASSWORD('email'), [email])
+        .query(PASSPORT_LOGIN, [email])
         .then(([rows]) => {
-          const user = rows as ValidateUser[];
+          const user = rows as PassportLogIn[];
           if (user.length === 0)
             return done(null, false, {
               message: '없는 이메일입니다.',
             });
-
           if (
             !validatePassword({
               password,
@@ -36,12 +35,10 @@ passport.use(
               message: '비밀번호가 일치하지 않습니다.',
             });
 
-          return pool
-            .query(USER.GET_ONE('email'), [email])
-            .then(([rows]) => done(null, (rows as User[])[0]))
-            .catch(err => done(err));
+          const { hash, salt, ...rest } = user[0];
+          return done(null, rest);
         })
-        .catch(err => done(err));
+        .catch(err => done(err)); // pool.query(PASSPORT_LOGIN)
     },
   ),
 );

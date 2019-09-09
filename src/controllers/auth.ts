@@ -28,7 +28,7 @@ export const logIn = (
           .end();
 
       const token = generateJwt(user.id);
-      return res.json({ user, token }).end();
+      return res.json({ ...user, token }).end();
     },
   )(req, res, next);
 
@@ -76,7 +76,7 @@ export const sendSecretKey = (
       })
         .then(() => res.status(200).end())
         .catch(next);
-    })
+    }) //query(USER.PATCH)
     .catch(next);
 };
 
@@ -97,7 +97,7 @@ export const verifySecretKey = (
         .then(([rows2]) => {
           if (!isUpdated(rows2)) return res.status(500).end();
           const token = generateJwt((req.user as User).id);
-          return res.json({ user: req.user, token }).end();
+          return res.json({ ...req.user, token }).end();
         })
         .catch(next);
 
@@ -121,7 +121,7 @@ export const googleCallback = (
   req: Request,
   res: Response,
   next: NextFunction,
-): Promise<void> =>
+): void =>
   passport.authenticate('google', (error, user, _) => {
     if (error) return next(error);
     const {
@@ -132,31 +132,27 @@ export const googleCallback = (
     return pool
       .query(USER.GET_ONE('email'), [email])
       .then(([rows]) => {
+        const user = rows as User[];
         // user is already existed
-        if ((rows as User[]).length === 1) {
-          const token = generateJwt((rows as User[])[0].id);
+        if (user.length === 1) {
+          const token = generateJwt(user[0].id);
           return pool
-            .query(USER.PATCH({ googleId: id }), [email])
-            .then(() => res.redirect(`http://localhost:3000/#/?token=${token}`))
+            .query(USER.PATCH({ googleId: id }), [user[0].id])
+            .then(() =>
+              res.redirect(`http://localhost:3000/#/callback?token=${token}`),
+            )
             .catch(next);
         }
-        // create user
-        return pool
-          .query(USER.CREATE_GOOGLE, [email, name, id, picture])
-          .then(([rows2]) => {
-            if (!isUpdated(rows2)) return res.status(500).end();
-
-            return pool
-              .query(USER.GET_ONE('email'), [email])
-              .then(([rows]) => {
-                const token = generateJwt((rows as User[])[0].id);
-                return res.redirect(`http://localhost:3000/#/?token=${token}`);
-              })
-              .catch(next);
-          })
-          .catch(next);
+        // next create user
+        res.locals = {
+          googleId: id,
+          email,
+          name,
+          picture,
+        };
+        return next();
       })
-      .catch(next);
+      .catch(next); // pool.query(USER.GET_ONE)
   })(req, res, next);
 
 export const naver = passport.authenticate('naver');
@@ -177,27 +173,24 @@ export const naverCallback = (
       .query(USER.GET_ONE('email'), [email])
       .then(([rows]) => {
         // user is already existed
-        if ((rows as User[]).length === 1) {
-          const token = generateJwt((rows as User[])[0].id);
+        const user = rows as User[];
+        if (user.length === 1) {
+          const token = generateJwt(user[0].id);
           return pool
-            .query(USER.PATCH({ naverId: id }), [email])
-            .then(() => res.redirect(`http://localhost:3000/#/?token=${token}`))
+            .query(USER.PATCH({ naverId: id }), [user[0].id])
+            .then(() =>
+              res.redirect(`http://localhost:3000/#/callback?token=${token}`),
+            )
             .catch(next);
         }
         // create user
-        return pool
-          .query(USER.CREATE_NAVER, [email, nickname, id, profile_image])
-          .then(([rows2]) => {
-            if (!isUpdated(rows2)) return res.status(500).end();
-            return pool
-              .query(USER.GET_ONE('email'), [email])
-              .then(([rows]) => {
-                const token = generateJwt((rows as User[])[0].id);
-                return res.redirect(`http://localhost:3000/#/?token=${token}`);
-              })
-              .catch(next);
-          })
-          .catch(next);
+        res.locals = {
+          naverId: id,
+          email,
+          profile_image,
+          nickname,
+        };
+        return next();
       })
-      .catch(next);
+      .catch(next); //pool.query(USER.GET_ONE)
   })(req, res, next);

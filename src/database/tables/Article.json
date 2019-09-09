@@ -10,7 +10,7 @@
     },
     "content": {
       "type": "TEXT",
-      "constraint": ["NOT NULL"]
+      "constraint": ["DEFAULT NULL"]
     },
     "author": {
       "id": "UNSIGNED INT"

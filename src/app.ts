@@ -14,6 +14,7 @@ import { ErrorWithStatus } from 'types/app';
 const app = express();
 const isProduction = process.env.NODE_ENV === 'production';
 
+//enable pre-flight
 app.set('port', process.env.PORT);
 app.set('env', process.env.NODE_ENV);
 app.use(helmet());

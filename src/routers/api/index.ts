@@ -15,7 +15,7 @@ router.use(routes.user, ...authRequired, user);
 // ...authRequired : Authorization Header - token 검사
 // router.use(routes.follow, ...authRequired, follow);
 // ...authRequired : Authorization Header - token 검사
-// router.use(routes.article, ...authRequired, article);
+router.use(routes.article, article);
 
 router.use(
   (err: QueryError, req: Request, res: Response, next: NextFunction): void => {

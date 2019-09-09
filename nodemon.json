@@ -3,5 +3,5 @@
   "verbose": true,
   "watch:": ["src"],
   "delay": "1000",
-  "ignore": ["node_modules"]
+  "ignore": ["node_modules", "sql"]
 }

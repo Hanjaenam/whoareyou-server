@@ -3,7 +3,7 @@ export interface CUDRows {
 }
 
 export interface User {
-  id: number;
+  id: string;
   email: string;
   name: string;
   introduce: string | null;
@@ -16,10 +16,11 @@ export interface User {
   createdAt: string;
 }
 
-export interface ValidateUser {
-  salt: string;
+export interface PassportLogIn extends User {
   hash: string;
+  salt: string;
 }
+
 export interface ErrorWithStatus {
   status?: number;
   name: string;
@@ -39,7 +40,12 @@ export interface SendMailParams {
   secret: string;
 }
 export interface ReqUser {
-  id: number;
+  id: string;
   iat: number;
   exp: number;
+}
+
+export interface ValidateUser {
+  hash: string;
+  salt: string;
 }

@@ -12,7 +12,12 @@ import {
   sendSecretKey,
 } from 'controllers/auth';
 import { requiredData } from 'middlewares';
-import { isNotExistedUser, isExistedUser } from 'middlewares/auth';
+import {
+  isNotExistedUser,
+  isExistedUser,
+  createGoogleAccount,
+  createNaverAccount,
+} from 'middlewares/auth';
 
 const router = express.Router();
 
@@ -52,9 +57,9 @@ router.patch(
 );
 // google oauth
 router.get(routes.google, google);
-router.get(routes.googleCallback, googleCallback);
+router.get(routes.googleCallback, googleCallback, createGoogleAccount);
 // naver oauth
 router.get(routes.naver, naver);
-router.get(routes.naverCallback, naverCallback);
+router.get(routes.naverCallback, naverCallback, createNaverAccount);
 
 export default router;

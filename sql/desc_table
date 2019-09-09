@@ -1,5 +1,5 @@
 CREATE TABLE User (
-  id        INT UNSIGNED AUTO_INCREMENT,
+  id        BINARY(16),
   email     VARCHAR(320) UNIQUE NOT NULL,
   name      CHAR(16) NOT NULL,
   introduce VARCHAR(128) DEFAULT NULL,
@@ -15,20 +15,33 @@ CREATE TABLE User (
 );
 
 CREATE TABLE Article (
-  id        INT UNSIGNED AUTO_INCREMENT,
-  content   TEXT NOT NULL,
-  author    INT UNSIGNED,
+  id        BINARY(16),
+  content   TEXT DEFAULT NULL,
+  author    BINARY(16),
   createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  favorite  INT UNSIGNED DEFAULT 0,
+  likeNumber  INT UNSIGNED DEFAULT 0,
   PRIMARY KEY(id),
   FOREIGN KEY(author) REFERENCES User(id) ON DELETE SET NULL
 );
 
-CREATE TABLE Files (
-  article INT UNSIGNED,
+CREATE TABLE File (
+  id      BINARY(16),
+  article BINARY(16),
   url     TEXT NOT NULL,
+  PRIMARY KEY(id),
   FOREIGN KEY(article) REFERENCES Article(id) ON DELETE SET NULL
 )
+
+CREATE TABLE Comment (
+  id        BINARY(16),
+  content   TEXT NOT NULL,
+  article   BINARY(16),
+  author    BINARY(16),
+  createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY(id),
+  FOREIGN KEY(author) REFERENCES User(id) ON DELETE SET NULL,
+  FOREIGN KEY(article) REFERENCES Article(id) ON DELETE SET NULL
+);
 
 
 
@@ -61,16 +74,5 @@ CREATE TABLE Favorite (
   user    BINARY(16),
   article BINARY(16),
   FOREIGN KEY(user) REFERENCES User(id) ON DELETE SET NULL,
-  FOREIGN KEY(article) REFERENCES Article(id) ON DELETE SET NULL
-);
-
-CREATE TABLE Comment (
-  id        BINARY(16),
-  content   TEXT NOT NULL,
-  article   BINARY(16),
-  author    BINARY(16),
-  createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY(id),
-  FOREIGN KEY(author) REFERENCES User(id) ON DELETE SET NULL,
   FOREIGN KEY(article) REFERENCES Article(id) ON DELETE SET NULL
 );

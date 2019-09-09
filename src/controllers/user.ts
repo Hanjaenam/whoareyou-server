@@ -14,25 +14,25 @@ export const getMe = (
     .then(([rows]) => res.json((rows as User[])[0]).end())
     .catch(next);
 
-export const getAll = (
-  _: Request,
-  res: Response,
-  next: NextFunction,
-): Promise<void> =>
-  pool
-    .query(USER.GET_ALL)
-    .then(([rows]) => res.json(rows).end())
-    .catch(next);
+// export const getAll = (
+//   _: Request,
+//   res: Response,
+//   next: NextFunction,
+// ): Promise<void> =>
+//   pool
+//     .query(USER.GET_ALL)
+//     .then(([rows]) => res.json(rows).end())
+//     .catch(next);
 
-export const getOne = (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): Promise<void> =>
-  pool
-    .query(USER.GET_ONE('id'), [req.params.id])
-    .then(([rows]) => res.json((rows as [User])[0]).end())
-    .catch(next);
+// export const getOne = (
+//   req: Request,
+//   res: Response,
+//   next: NextFunction,
+// ): Promise<void> =>
+//   pool
+//     .query(USER.GET_ONE('id'), [req.params.id])
+//     .then(([rows]) => res.json((rows as [User])[0]).end())
+//     .catch(next);
 
 export const remove = (
   req: Request,

@@ -21,7 +21,7 @@ export const dbQueryToStr = (obj: Record<string, string | null>): string =>
     })
     .join();
 
-export const generateJwt = (id: number): string =>
+export const generateJwt = (id: string): string =>
   jwt.sign(
     {
       id,

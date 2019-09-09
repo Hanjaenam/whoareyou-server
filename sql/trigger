@@ -1,7 +1,7 @@
 
 DELIMITER ;;
 CREATE TRIGGER generate_id 
-BEFORE INSERT ON Article, Comment, Tag
+BEFORE INSERT ON User, Article, Comment
 FOR EACH ROW 
 BEGIN 
 	SET NEW.id = UNHEX(REPLACE(UUID(),'-',''));
