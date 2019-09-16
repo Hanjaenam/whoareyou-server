@@ -94,11 +94,12 @@ export const verifySecretKey = (
         .query(USER.PATCH({ valid: true, secret: null }), [
           (req.user as User).id,
         ])
-        .then(([rows2]) => {
-          if (!isUpdated(rows2)) return res.status(500).end();
-          const token = generateJwt((req.user as User).id);
-          return res.json({ ...req.user, token }).end();
-        })
+        .then(([rows2]) =>
+          checkUpdated(rows2, res, {
+            ...req.user,
+            token: generateJwt((req.user as User).id),
+          }),
+        )
         .catch(next);
 
 export const changePassword = (

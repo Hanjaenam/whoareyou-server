@@ -1,5 +1,5 @@
 import pool from 'database/pool';
-import { checkUpdated, isUpdated, generatePbkdf2 } from 'utils';
+import { checkUpdated, generatePbkdf2 } from 'utils';
 import { User, ReqUser } from 'types/app';
 import { Request, Response, NextFunction } from 'express';
 import { USER } from 'database/queries';
@@ -87,8 +87,5 @@ export const patchAvatar = (
     .query(USER.PATCH({ avatar: req.file.location }), [
       (req.user as ReqUser).id,
     ])
-    .then(([rows]) => {
-      if (!isUpdated(rows)) return res.status(500).end();
-      return res.json(req.file.location).end();
-    })
+    .then(([rows]) => checkUpdated(rows, res, req.file.location))
     .catch(next);

@@ -12,7 +12,6 @@ export const isNotExistedUser = (
   pool
     .query(USER.GET_ONE('email'), [req.body.email])
     .then(([rows]) => {
-      console.log(req.body);
       if ((rows as User[]).length === 1)
         return res
           .status(409)

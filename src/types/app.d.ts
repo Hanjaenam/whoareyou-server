@@ -1,5 +1,10 @@
 export interface CUDRows {
+  fieldCount: number;
   affectedRows: number;
+  insertId: number;
+  info: string;
+  serverStatus: number;
+  warningStatus: number;
 }
 
 export interface User {
@@ -16,6 +21,18 @@ export interface User {
   createdAt: string;
 }
 
+export interface Article {
+  id: string;
+  content: string;
+  creator: string;
+  createdAt: string;
+}
+
+export interface Photo {
+  id: string;
+  article: string;
+  url: string;
+}
 export interface PassportLogIn extends User {
   hash: string;
   salt: string;

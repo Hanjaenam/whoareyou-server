@@ -11,7 +11,7 @@ import {
 } from 'controllers/user';
 import { haveAtLeastOneData, requiredData } from 'middlewares';
 import { isValidPassword } from 'middlewares/user';
-import uplaodS3, { deletePreAvatar } from 'middlewares/awsS3';
+import multerS3, { deletePreAvatar } from 'middlewares/awsS3';
 
 const router = express.Router();
 // 내 정보 가져오기
@@ -33,6 +33,11 @@ router.patch(
   changePassword,
 );
 // 아바타 변경
-router.patch(routes.avatar, deletePreAvatar, uplaodS3, patchAvatar);
+router.patch(
+  routes.avatar,
+  deletePreAvatar,
+  multerS3('user').single('avatar'),
+  patchAvatar,
+);
 
 export default router;

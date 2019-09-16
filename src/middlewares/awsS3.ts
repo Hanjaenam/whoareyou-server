@@ -12,14 +12,6 @@ const s3 = new aws.S3({
   region: 'ap-northeast-2',
 });
 
-const multerAvatar = multer({
-  storage: multerS3({
-    s3,
-    bucket: 'whoareyou-community-file/user',
-    acl: 'public-read',
-  }),
-});
-
 export const deletePreAvatar = (
   req: Request,
   res: Response,
@@ -45,4 +37,11 @@ export const deletePreAvatar = (
     })
     .catch(next);
 
-export default multerAvatar.single('avatar');
+export default (bucket: 'user' | 'article'): multer.Instance =>
+  multer({
+    storage: multerS3({
+      s3,
+      bucket: `whoareyou-community-file/${bucket}`,
+      acl: 'public-read',
+    }),
+  });

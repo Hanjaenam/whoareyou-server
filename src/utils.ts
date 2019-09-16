@@ -2,7 +2,6 @@ import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 import { secret } from 'config/env';
 import { RowDataPacket, OkPacket } from 'mysql';
-import { CUDRows } from 'types/app';
 import { Response } from 'express';
 import { ValidatePassword } from 'types/utils';
 
@@ -50,8 +49,13 @@ export const validatePassword = ({
 export const checkUpdated = (
   rows: RowDataPacket[] | RowDataPacket[][] | OkPacket | OkPacket[],
   res: Response,
-): void => res.status((rows as CUDRows).affectedRows === 0 ? 500 : 200).end();
+  data?: any,
+): void => {
+  if ((rows as OkPacket).affectedRows === 0) return res.status(500).end();
+  else if (data) return res.json(data).end();
+  return res.json(200).end();
+};
 
 export const isUpdated = (
   rows: RowDataPacket[] | RowDataPacket[][] | OkPacket | OkPacket[],
-): boolean => (rows as CUDRows).affectedRows !== 0;
+): boolean => (rows as OkPacket).affectedRows !== 0;
