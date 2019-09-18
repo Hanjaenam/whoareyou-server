@@ -4,8 +4,8 @@ import routes from 'routes';
 import { Strategy as LocalStrategy } from 'passport-local';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import { Strategy as NaverStrategy } from 'passport-naver';
-import { PASSPORT_LOGIN } from 'database/queries';
-import { PassportLogIn } from 'types/app';
+import USER from 'database/queries/user';
+import { Passport } from 'types/database/user';
 import { validatePassword } from 'utils';
 
 passport.use(
@@ -17,9 +17,9 @@ passport.use(
     },
     (email, password, done): void => {
       pool
-        .query(PASSPORT_LOGIN, [email])
+        .query(USER.PASSPORT, [email])
         .then(([rows]) => {
-          const user = rows as PassportLogIn[];
+          const user = rows as Passport[];
           if (user.length === 0)
             return done(null, false, {
               message: '없는 이메일입니다.',

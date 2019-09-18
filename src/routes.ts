@@ -19,8 +19,9 @@ const NAVER_CALLBACK = '/naver/callback';
 const FOLLOW = '/follow';
 
 const ARTICLE = '/article';
-const ID = '/:id';
 
+const ID = '/:id';
+const CREATOR = '/:creator';
 const TAG = '/tag';
 
 export default {
@@ -45,6 +46,8 @@ export default {
   follow: FOLLOW,
 
   article: ARTICLE,
+
   id: ID,
+  creator: CREATOR,
   tag: TAG,
 };

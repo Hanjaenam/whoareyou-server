@@ -1,6 +1,6 @@
 import expressJwt from 'config/expressJwt';
 import { Request, Response, NextFunction } from 'express';
-import { ErrorWithStatus } from 'types/app';
+import { ErrorWithStatus } from 'types/error';
 
 export const requiredData = (args: string[]) => (
   req: Request,

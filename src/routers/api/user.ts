@@ -1,30 +1,33 @@
 import express from 'express';
 import routes from 'routes';
 import {
-  // getOne,
+  getOne,
   remove,
   patch,
-  // getAll,
   getMe,
   patchAvatar,
   changePassword,
+  getArticle,
 } from 'controllers/user';
 import { haveAtLeastOneData, requiredData } from 'middlewares';
 import { isValidPassword } from 'middlewares/user';
-import multerS3, { deletePreAvatar } from 'middlewares/awsS3';
+import multerS3, { removePreAvatar } from 'middlewares/awsS3';
 
 const router = express.Router();
 // 내 정보 가져오기
 router.get(routes.me, getMe);
 
-// router.get(routes.home, getAll);
+// get 유저 정보
+router.get(routes.id, getOne);
+router.get(routes.id + routes.article, getArticle);
 
-// router.get(routes.id, getOne);
 // 회원탈퇴
 router.delete(routes.home, remove);
+
 // 유저 정보 수정
 // haveAtLeastOneData : 최소한 name, avatar 두개 중 하나의 데이터는 보내야 한다.
 router.patch(routes.home, haveAtLeastOneData(['name', 'introduce']), patch);
+
 // 비밀번호 변경
 router.patch(
   routes.changePasswod,
@@ -35,7 +38,7 @@ router.patch(
 // 아바타 변경
 router.patch(
   routes.avatar,
-  deletePreAvatar,
+  removePreAvatar,
   multerS3('user').single('avatar'),
   patchAvatar,
 );

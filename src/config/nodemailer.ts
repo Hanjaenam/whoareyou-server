@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer';
 import mailgunTransport from 'nodemailer-mailgun-transport';
-import { SendMailParams } from 'types/app';
+import { SendMailParams } from 'types/config';
 
 const mailgunOptions = {
   auth: {

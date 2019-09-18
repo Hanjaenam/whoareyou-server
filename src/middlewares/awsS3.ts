@@ -3,8 +3,9 @@ import multer from 'multer';
 import multerS3 from 'multer-s3';
 import { Request, Response, NextFunction } from 'express';
 import pool from 'database/pool';
-import { USER } from 'database/queries';
-import { ReqUser, User } from 'types/app';
+import USER from 'database/queries/user';
+import { Jwt } from 'types/reqUser';
+import { OnlyAvatar } from 'types/database/user';
 
 const s3 = new aws.S3({
   accessKeyId: process.env.AWS_ACCESS_KEY,
@@ -12,15 +13,15 @@ const s3 = new aws.S3({
   region: 'ap-northeast-2',
 });
 
-export const deletePreAvatar = (
+export const removePreAvatar = (
   req: Request,
   res: Response,
   next: NextFunction,
 ): Promise<void | aws.Request<aws.S3.DeleteObjectOutput, aws.AWSError>> =>
   pool
-    .query(USER.GET_ONE('id'), (req.user as ReqUser).id)
+    .query(USER.GET.ONE.AVT_WR_ID, (req.user as Jwt).id)
     .then(([rows]) => {
-      const { avatar } = (rows as User[])[0];
+      const { avatar } = (rows as OnlyAvatar[])[0];
       if (avatar) {
         const Key = avatar.slice(avatar.lastIndexOf('/') + 1);
         return s3.deleteObject(

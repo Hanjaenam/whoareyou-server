@@ -1,8 +1,8 @@
 import pool from 'database/pool';
 import { Request, Response, NextFunction } from 'express';
-import { User } from 'types/app';
-import { USER } from 'database/queries';
+import USER from 'database/queries/user';
 import { isUpdated, generateJwt } from 'utils';
+import { IdEmlSecrt, OnlyId } from 'types/database/user';
 
 export const isNotExistedUser = (
   req: Request,
@@ -10,9 +10,9 @@ export const isNotExistedUser = (
   next: NextFunction,
 ): Promise<void> =>
   pool
-    .query(USER.GET_ONE('email'), [req.body.email])
+    .query(USER.GET.ONE.ID_WR_EML, [req.body.email])
     .then(([rows]) => {
-      if ((rows as User[]).length === 1)
+      if ((rows as OnlyId[]).length === 1)
         return res
           .status(409)
           .json({
@@ -23,15 +23,18 @@ export const isNotExistedUser = (
     })
     .catch(next);
 
+//sendSecretKey : id, email
+//verifySecretKey : secret ,id
+//changePassword : id
 export const isExistedUser = (
   req: Request,
   res: Response,
   next: NextFunction,
 ): Promise<void> =>
   pool
-    .query(USER.GET_ONE('email'), [req.body.email])
+    .query(USER.GET.ONE.ID_EML_SECRT_WR_EML, [req.body.email])
     .then(([rows]) => {
-      const user = rows as User[];
+      const user = rows as IdEmlSecrt[];
       if (user.length === 0)
         return res
           .status(404)
@@ -56,9 +59,9 @@ export const createGoogleAccount = (
       if (!isUpdated(rows)) return res.status(500).end();
 
       return pool
-        .query(USER.GET_ONE('email'), [email])
+        .query(USER.GET.ONE.ID_WR_EML, [email])
         .then(([rows2]) => {
-          const token = generateJwt((rows2 as User[])[0].id);
+          const token = generateJwt((rows2 as OnlyId[])[0].id);
           return res.redirect(`http://localhost:3000/#/?token=${token}`);
         })
         .catch(next); // pool.query(USER.CREATE_GOOGLE)
@@ -79,9 +82,9 @@ export const createNaverAccount = (
       if (!isUpdated(rows)) return res.status(500).end();
 
       return pool
-        .query(USER.GET_ONE('email'), [email])
+        .query(USER.GET.ONE.ID_WR_EML, [email])
         .then(([rows2]) => {
-          const token = generateJwt((rows2 as User[])[0].id);
+          const token = generateJwt((rows2 as OnlyId[])[0].id);
           return res.redirect(`http://localhost:3000/#/?token=${token}`);
         })
         .catch(next); // pool.query(USER.GET_ONE)

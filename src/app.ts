@@ -5,7 +5,7 @@ import express, { Request, Response, NextFunction } from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import passport from 'passport';
-import { ErrorWithStatus } from 'types/app';
+import { ErrorWithStatus } from 'types/error';
 
 // * app.locals
 // Once set, the value of app.locals properties persist throughout the life of the application,

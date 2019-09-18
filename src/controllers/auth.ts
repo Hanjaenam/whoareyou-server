@@ -2,9 +2,10 @@ import passport from 'passport';
 import pool from 'database/pool';
 import sendEmail from 'config/nodemailer';
 import { generateJwt, generatePbkdf2, isUpdated, checkUpdated } from 'utils';
-import { USER } from 'database/queries';
+import USER from 'database/queries/user';
 import { Request, Response, NextFunction } from 'express';
-import { User } from 'types/app';
+import { LogIn } from 'types/database/user';
+import { IdEmlSecrt, OnlyId } from 'types/database/user';
 
 export const logIn = (
   req: Request,
@@ -14,7 +15,7 @@ export const logIn = (
   passport.authenticate(
     'local',
     { session: false },
-    (error, user: User, info) => {
+    (error, user: LogIn, info) => {
       if (error) return next(error);
       if (!user)
         return res
@@ -26,9 +27,9 @@ export const logIn = (
           .status(401)
           .json({ message: '보안코드를 입력하시지 않으셨습니다.' })
           .end();
-
       const token = generateJwt(user.id);
-      return res.json({ ...user, token }).end();
+      const { valid, ...rest } = user;
+      return res.json({ ...rest, token }).end();
     },
   )(req, res, next);
 
@@ -48,12 +49,7 @@ export const register = (
       if (!isUpdated(rows)) return res.status(500).end();
 
       return sendEmail({ type: 'register', to: email, secret })
-        .then(() =>
-          res
-            .status(200)
-            .json({ message: `${email} 로 보안코드가 전송되었습니다.` })
-            .end(),
-        )
+        .then(() => res.status(200).end())
         .catch(next);
     })
     .catch(next);
@@ -66,12 +62,12 @@ export const sendSecretKey = (
 ): Promise<void> => {
   const secret = Math.floor(100000 + Math.random() * 900000).toString();
   return pool
-    .query(USER.PATCH({ secret }), [(req.user as User).id])
+    .query(USER.PATCH({ secret }), [(req.user as IdEmlSecrt).id])
     .then(([rows]) => {
       if (!isUpdated(rows)) return res.status(500).end();
       return sendEmail({
         type: req.body.type,
-        to: (req.user as User).email,
+        to: (req.user as IdEmlSecrt).email,
         secret,
       })
         .then(() => res.status(200).end())
@@ -85,19 +81,19 @@ export const verifySecretKey = (
   res: Response,
   next: NextFunction,
 ): Promise<void> | void =>
-  (req.user as User).secret !== req.body.secret
+  (req.user as IdEmlSecrt).secret !== req.body.secret
     ? res
         .status(403)
         .json({ message: '보안코드가 일치하지 않습니다.' })
         .end()
     : pool
         .query(USER.PATCH({ valid: true, secret: null }), [
-          (req.user as User).id,
+          (req.user as IdEmlSecrt).id,
         ])
         .then(([rows2]) =>
           checkUpdated(rows2, res, {
             ...req.user,
-            token: generateJwt((req.user as User).id),
+            token: generateJwt((req.user as IdEmlSecrt).id),
           }),
         )
         .catch(next);
@@ -109,7 +105,7 @@ export const changePassword = (
 ): Promise<void> => {
   const { salt, hash } = generatePbkdf2(req.body.password);
   return pool
-    .query(USER.PATCH({ hash, salt }), [(req.user as User).id])
+    .query(USER.PATCH({ hash, salt }), [(req.user as IdEmlSecrt).id])
     .then(([rows]) => checkUpdated(rows, res))
     .catch(next);
 };
@@ -131,9 +127,9 @@ export const googleCallback = (
     } = user;
 
     return pool
-      .query(USER.GET_ONE('email'), [email])
+      .query(USER.GET.ONE.ID_WR_EML, [email])
       .then(([rows]) => {
-        const user = rows as User[];
+        const user = rows as OnlyId[];
         // user is already existed
         if (user.length === 1) {
           const token = generateJwt(user[0].id);
@@ -171,10 +167,10 @@ export const naverCallback = (
     } = user;
 
     pool
-      .query(USER.GET_ONE('email'), [email])
+      .query(USER.GET.ONE.ID_WR_EML, [email])
       .then(([rows]) => {
         // user is already existed
-        const user = rows as User[];
+        const user = rows as OnlyId[];
         if (user.length === 1) {
           const token = generateJwt(user[0].id);
           return pool

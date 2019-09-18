@@ -1,0 +1,57 @@
+ const articles = rows as Article[];
+      const creators = articles.map(article =>
+        pool.query(USER.GET_ONE_OF_ARTICLE, [article.creator]),
+      );
+      const photos = articles.map(article =>
+        pool.query(PHOTO.GET_BY_ARTICLE, [article.id]),
+      );
+      const likes = articles.map(article =>
+        pool.query(FAVORITE.COUNT, [article.id]),
+      );
+      const commentNumber = articles.map(article =>
+        pool.query(COMMENT.COUNT, [article.id]),
+      );
+      const comments = articles.map(article =>
+        pool.query(COMMENT.GET_BY_ARTICLE, [article.id]),
+      );
+      const isLiked =
+        req.user &&
+        articles.map(article =>
+          pool.query(FAVORITE.IS_LIKED, [article.id, (req.user as ReqUser).id]),
+        );
+      const isBookmarked =
+        req.user &&
+        articles.map(article =>
+          pool.query(BOOKMARK.IS_BOOKMARK, [
+            article.id,
+            (req.user as ReqUser).id,
+          ]),
+        );
+      try {
+        const creatRes = await Promise.all(creators);
+        const photRes = await Promise.all(photos);
+        const likeRes = await Promise.all(likes);
+        const commntNumRes = await Promise.all(commentNumber);
+        const comntRes = await Promise.all(comments);
+        const isLikedRes = isLiked ? await Promise.all(isLiked) : undefined;
+        const isBokmkedRes = isBookmarked
+          ? await Promise.all(isBookmarked)
+          : undefined;
+        const data = articles.map((article, index) => ({
+          ...article,
+          creator: (creatRes[index] as RowDataPacket)[0][0],
+          photos: photRes[index][0],
+          likeNumber: (likeRes[index] as RowDataPacket)[0][0].count,
+          commentNumber: (commntNumRes[index] as RowDataPacket)[0][0].count,
+          comments: comntRes[index][0],
+          isLiked: req.user
+            ? (isLikedRes[index] as RowDataPacket)[0][0] || false
+            : false,
+          isBookmarked: req.user
+            ? (isBokmkedRes[index] as RowDataPacket)[0][0] || false
+            : false,
+        }));
+        return res.json(data).end();
+      } catch (error) {
+        return next(error);
+      }

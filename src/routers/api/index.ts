@@ -5,21 +5,8 @@ import routes from 'routes';
 import user from './user';
 import { authRequired } from 'middlewares';
 import { QueryError } from 'mysql2';
-import pool from 'database/pool';
 
 const router = express.Router();
-
-router.post(
-  '/t',
-  (req: Request, res: Response, next: NextFunction): Promise<void> =>
-    pool
-      .query('INSERT INTO test(content) VALUES("tetetet")')
-      .then(([rows]) => {
-        console.log(rows);
-        return res.status(200).end();
-      })
-      .catch(next),
-);
 
 router.use(routes.auth, auth);
 // ...authRequired : Authorization Header - token 검사
