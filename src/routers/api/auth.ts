@@ -11,7 +11,7 @@ import {
   changePassword,
   sendSecretKey,
 } from 'controllers/auth';
-import { requiredData } from 'middlewares';
+import { requiredData } from 'middlewares/common';
 import {
   isNotExistedUser,
   isExistedUser,

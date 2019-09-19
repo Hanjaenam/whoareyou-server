@@ -63,12 +63,10 @@ export const validatePassword = ({
 export const checkUpdated = (
   rows: RowDataPacket[] | RowDataPacket[][] | OkPacket | OkPacket[],
   res: Response,
-  data?: any,
-): void => {
-  if ((rows as OkPacket).affectedRows === 0) return res.status(500).end();
-  else if (data) return res.json(data).end();
-  return res.json(200).end();
-};
+): void =>
+  (rows as OkPacket).affectedRows === 0
+    ? res.status(500).end()
+    : res.json(200).end();
 
 export const isUpdated = (
   rows: RowDataPacket[] | RowDataPacket[][] | OkPacket | OkPacket[],
@@ -92,7 +90,7 @@ export const articleDataTemplate = async (
     pool.query(COMMENT.COUNT, [article.id]),
   );
   const comments = articles.map(article =>
-    pool.query(COMMENT.GET.ONE.BASIC, [article.id]),
+    pool.query(COMMENT.GET.ONE.USING_ARTICLE, [article.id]),
   );
   const isLiked =
     user &&

@@ -2,7 +2,7 @@ import passport from 'passport';
 import pool from 'database/pool';
 import sendEmail from 'config/nodemailer';
 import { generateJwt, generatePbkdf2, isUpdated, checkUpdated } from 'utils';
-import USER from 'database/queries/user';
+import { USER } from 'database/queries';
 import { Request, Response, NextFunction } from 'express';
 import { LogIn } from 'types/database/user';
 import { IdEmlSecrt, OnlyId } from 'types/database/user';
@@ -90,12 +90,12 @@ export const verifySecretKey = (
         .query(USER.PATCH({ valid: true, secret: null }), [
           (req.user as IdEmlSecrt).id,
         ])
-        .then(([rows2]) =>
-          checkUpdated(rows2, res, {
-            ...req.user,
-            token: generateJwt((req.user as IdEmlSecrt).id),
-          }),
-        )
+        .then(([rows2]) => {
+          if (!isUpdated(rows2)) return res.status(500).end();
+          return res
+            .json({ token: generateJwt((req.user as IdEmlSecrt).id) })
+            .end();
+        })
         .catch(next);
 
 export const changePassword = (

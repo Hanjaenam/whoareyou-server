@@ -9,9 +9,9 @@ import {
   changePassword,
   getArticle,
 } from 'controllers/user';
-import { haveAtLeastOneData, requiredData } from 'middlewares';
-import { isValidPassword } from 'middlewares/user';
-import multerS3, { removePreAvatar } from 'middlewares/awsS3';
+import { haveAtLeastOneData, requiredData } from 'middlewares/common';
+import { isValidPassword, removePreAvatar } from 'middlewares/user';
+import multerS3 from 'middlewares/awsS3';
 
 const router = express.Router();
 // 내 정보 가져오기
@@ -23,6 +23,8 @@ router.get(routes.id + routes.article, getArticle);
 
 // 회원탈퇴
 router.delete(routes.home, remove);
+
+// 아바타 삭제 라우터 넣을 것.
 
 // 유저 정보 수정
 // haveAtLeastOneData : 최소한 name, avatar 두개 중 하나의 데이터는 보내야 한다.
@@ -39,7 +41,7 @@ router.patch(
 router.patch(
   routes.avatar,
   removePreAvatar,
-  multerS3('user').single('avatar'),
+  multerS3('avatars').single('avatar'),
   patchAvatar,
 );
 

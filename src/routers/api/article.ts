@@ -8,10 +8,15 @@ import {
   patch,
   getCreator,
 } from 'controllers/article';
-import { authRequired } from 'middlewares';
+import { authRequired } from 'middlewares/common';
 import multerS3 from 'middlewares/awsS3';
+import { isMine, removePhotos } from 'middlewares/article';
+import comment from './comment';
 
 const router = express.Router();
+
+//comment
+router.use(comment);
 
 // 둘러보기 getAll - 권한 풀어주기
 router.get(routes.home, getAll);
@@ -24,12 +29,12 @@ router.get(routes.id + routes.creator, getCreator);
 router.post(
   routes.home,
   ...authRequired,
-  multerS3('article').array('photos', 50),
+  multerS3('articles').array('photos', 50),
   create,
 );
 
 // 권한 필수
-router.delete(routes.id, ...authRequired, remove);
+router.delete(routes.id, ...authRequired, isMine, removePhotos, remove);
 
 // 권한 필수
 // router.patch(routes.id, patch);

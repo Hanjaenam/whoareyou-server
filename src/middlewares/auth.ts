@@ -1,6 +1,6 @@
 import pool from 'database/pool';
 import { Request, Response, NextFunction } from 'express';
-import USER from 'database/queries/user';
+import { USER } from 'database/queries';
 import { isUpdated, generateJwt } from 'utils';
 import { IdEmlSecrt, OnlyId } from 'types/database/user';
 
@@ -37,7 +37,7 @@ export const isExistedUser = (
       const user = rows as IdEmlSecrt[];
       if (user.length === 0)
         return res
-          .status(404)
+          .status(204)
           .json({ message: '없는 이메일입니다.' })
           .end();
       req.user = user[0];

@@ -20,5 +20,6 @@ declare namespace NodeJS {
     MAIL_GUN_DOMAIN: string;
     AWS_ACCESS_KEY: string;
     AWS_SECRET_KEY: string;
+    BUCKET: string;
   }
 }

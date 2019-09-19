@@ -4,7 +4,7 @@ import routes from 'routes';
 import { Strategy as LocalStrategy } from 'passport-local';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import { Strategy as NaverStrategy } from 'passport-naver';
-import USER from 'database/queries/user';
+import { USER } from 'database/queries';
 import { Passport } from 'types/database/user';
 import { validatePassword } from 'utils';
 

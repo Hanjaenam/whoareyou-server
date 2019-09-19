@@ -1,7 +1,5 @@
 import pool from 'database/pool';
-import ARTICLE from 'database/queries/article';
-import PHOTO from 'database/queries/photo';
-import USER from 'database/queries/user';
+import { USER, ARTICLE, PHOTO } from 'database/queries';
 import { Request, Response, NextFunction } from 'express';
 import { Basic } from 'types/database/article';
 import { checkUpdated, isUpdated, articleDataTemplate } from 'utils';
@@ -92,7 +90,7 @@ export const create = (
       const fileArr = files as Express.Multer.File[];
 
       pool
-        .query(PHOTO.CREATE_MANY, [
+        .query(PHOTO.CREATE.MANY, [
           fileArr.map(file => [article.insertId, file.location]),
         ])
         .then(([rows2]) => checkUpdated(rows2, res))
@@ -101,6 +99,22 @@ export const create = (
     .catch(next); // ARTICLE.CREATE
 };
 
+// query 해당하는 row 없을 시
+// ResultSetHeader {
+//   fieldCount: 0,
+//   affectedRows: 0,
+//   insertId: 0,
+//   info: '',
+//   serverStatus: 2,
+//   warningStatus: 0 }
+// 있을 시
+// ResultSetHeader {
+//   fieldCount: 0,
+//   affectedRows: 1,
+//   insertId: 0,
+//   info: '',
+//   serverStatus: 2,
+//   warningStatus: 0 }
 export const remove = (
   req: Request,
   res: Response,
@@ -108,7 +122,11 @@ export const remove = (
 ): Promise<void> =>
   pool
     .query(ARTICLE.REMOVE, [req.params.id, (req.user as Jwt).id])
-    .then(([rows]) => checkUpdated(rows, res))
+    .then(([rows]) => {
+      console.log('remove');
+      console.log(rows);
+      return checkUpdated(rows, res);
+    })
     .catch(next);
 
 export const patch = (

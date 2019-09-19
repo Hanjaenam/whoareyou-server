@@ -3,7 +3,7 @@ import article from './article';
 import express, { Request, NextFunction, Response } from 'express';
 import routes from 'routes';
 import user from './user';
-import { authRequired } from 'middlewares';
+import { authRequired } from 'middlewares/common';
 import { QueryError } from 'mysql2';
 
 const router = express.Router();
