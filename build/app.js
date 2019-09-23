@@ -10,6 +10,7 @@ const express_1 = __importDefault(require("express"));
 const helmet_1 = __importDefault(require("helmet"));
 const morgan_1 = __importDefault(require("morgan"));
 const passport_1 = __importDefault(require("passport"));
+const cors_1 = __importDefault(require("cors"));
 // * app.locals
 // Once set, the value of app.locals properties persist throughout the life of the application,
 // in contrast with res.locals properties that are valid only for the lifetime of the request.
@@ -18,6 +19,10 @@ const isProduction = process.env.NODE_ENV === 'production';
 //enable pre-flight
 app.set('port', process.env.PORT);
 app.set('env', process.env.NODE_ENV);
+if (process.env.NODE_ENV === 'production') {
+    console.log('✅ cors origin >>', origin);
+    app.use(cors_1.default({ origin: 'https://whoru.netlify.com' }));
+}
 app.use(helmet_1.default());
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));

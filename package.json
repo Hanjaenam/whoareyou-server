@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@sindresorhus/slugify": "^0.9.1",
+    "@types/cors": "^2.8.6",
     "@types/dotenv": "^6.1.1",
     "@types/express": "^4.17.1",
     "@types/express-jwt": "^0.0.42",
@@ -27,6 +28,7 @@
     "@types/passport-local": "^1.0.33",
     "@types/passport-naver": "^0.2.0",
     "aws-sdk": "^2.523.0",
+    "cors": "^2.8.5",
     "dotenv": "^8.1.0",
     "express": "^4.17.1",
     "express-jwt": "^5.3.1",

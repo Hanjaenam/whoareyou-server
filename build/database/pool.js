@@ -15,7 +15,7 @@ const pool = promise_1.default.createPool({
 exports.testConnection = () => pool
     .getConnection()
     .then(conn => {
-    console.log('✅ MySQL connect success', host);
+    console.log('✅ MySQL connect success >>', host);
     conn.release();
 })
     .catch(error => {

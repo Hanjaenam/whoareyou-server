@@ -15,7 +15,7 @@ export const testConnection = (): Promise<void> =>
   pool
     .getConnection()
     .then(conn => {
-      console.log('✅ MySQL connect success', host);
+      console.log('✅ MySQL connect success >>', host);
       conn.release();
     })
     .catch(error => {
