@@ -1,7 +1,7 @@
 import mysql from 'mysql2/promise';
 
 const host =
-  process.env.NODE_ENV === 'production' ? 'localhost' : process.env.DB_URL;
+  process.env.NODE_ENV === 'production' ? process.env.DB_URL : 'localhost';
 
 const pool = mysql.createPool({
   connectionLimit: Number(process.env.CONNECTION_LIMIT),
@@ -15,7 +15,7 @@ export const testConnection = (): Promise<void> =>
   pool
     .getConnection()
     .then(conn => {
-      console.log('✅ MySQL connect success');
+      console.log('✅ MySQL connect success', host);
       conn.release();
     })
     .catch(error => {

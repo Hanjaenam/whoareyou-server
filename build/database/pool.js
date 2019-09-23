@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const promise_1 = __importDefault(require("mysql2/promise"));
-const host = process.env.NODE_ENV === 'production' ? 'localhost' : process.env.DB_URL;
+const host = process.env.NODE_ENV === 'production' ? process.env.DB_URL : 'localhost';
 const pool = promise_1.default.createPool({
     connectionLimit: Number(process.env.CONNECTION_LIMIT),
     host,
@@ -15,7 +15,7 @@ const pool = promise_1.default.createPool({
 exports.testConnection = () => pool
     .getConnection()
     .then(conn => {
-    console.log('✅ MySQL connect success');
+    console.log('✅ MySQL connect success', host);
     conn.release();
 })
     .catch(error => {
