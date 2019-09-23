@@ -49,3 +49,13 @@ export const remove = (
     .query(COMMENT.REMOVE, [req.params.id])
     .then(([rows]) => checkUpdated(rows, res))
     .catch(next);
+
+export const patch = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> =>
+  pool
+    .query(COMMENT.PATCH, [req.body.content, req.params.id])
+    .then(([rows]) => checkUpdated(rows, res))
+    .catch(next);

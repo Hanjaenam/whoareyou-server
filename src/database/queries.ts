@@ -35,11 +35,13 @@ export const ARTICLE = {
   GET: {
     ALL: {
       BASIC: (start = 0): string =>
-        `SELECT id, content, createdAt, creator FROM Article ORDER BY createdAt DESC LIMIT ${start *
-          10} ,${start * 10 + 10}`,
+        `SELECT id, content, createdAt, creator FROM Article ORDER BY createdAt DESC LIMIT 10 OFFSET ${start}`,
       WR_CREATOR: (start = 0): string =>
-        `SELECT id, content, createdAt, creator FROM Article WHERE creator = ? ORDER BY createdAt DESC LIMIT ${start *
-          10} ,${start * 10 + 10}`,
+        `SELECT id, content, createdAt, creator FROM Article WHERE creator = ? ORDER BY createdAt DESC LIMIT 10 OFFSET ${start}`,
+      FAVORITE: (start = 0): string =>
+        `select A.id, A.content, A.createdAt, A.creator from Favorite as F, Article as A WHERE F.article = A.id ORDER BY createdAt DESC LIMIT 10 OFFSET ${start};`,
+      BOOKMARK: (start = 0): string =>
+        `select A.id, A.content, A.createdAt, A.creator from Bookmark as B, Article as A WHERE B.article = A.id ORDER BY createdAt DESC LIMIT 10 OFFSET ${start};`,
     },
 
     ONE: {
@@ -84,32 +86,48 @@ export const COMMENT = {
       USING_CREATE:
         'SELECT C.id, U.name as creator, C.content, C.createdAt From Comment as C, User as U WHERE C.id = ? AND C.creator = ?',
       USING_ARTICLE:
-        'SELECT C.id, C.content, U.name as creator, C.createdAt from Comment as C, User as U WHERE C.article=? AND C.creator = U.id LIMIT 3;',
+        'SELECT C.id, C.content, U.name as creator, C.createdAt from Comment as C, User as U WHERE C.article=? AND C.creator = U.id ORDER BY createdAt DESC LIMIT 3;',
       CREATOR: 'SELECT creator FROM Comment WHERE id = ?',
     },
     ALL: {
       USING_ARTICLE:
-        'SELECT C.id, U.name as creator, C.content, C.createdAt FROM Comment as C, User as U WHERE article=? AND U.id = C.creator',
+        'SELECT C.id, U.name as creator, C.content, C.createdAt FROM Comment as C, User as U WHERE article=? AND U.id = C.creator ORDER BY createdAt DESC LIMIT 10 OFFSET 3',
     },
   },
   CREATE: 'INSERT INTO Comment(article, creator, content) VALUES(?, ?, ?)',
   REMOVE: 'DELETE FROM Comment WHERE id = ?',
+  PATCH: 'UPDATE Comment SET content = ? WHERE id = ?',
 };
 
 // ! FAVORITE ---------------------------------------------------------------------------------------
 
 export const FAVORITE = {
+  GET: {
+    ONE: {
+      CREATOR: 'SELECT creator FROM Favorite WHERE article = ?',
+    },
+  },
   COUNT: 'SELECT count(*) as count FROM Favorite WHERE article = ?',
 
   IS_LIKED:
     'SELECT IF(article, True, False) AS isLiked FROM Favorite WHERE article = ? AND creator = ?',
+
+  CREATE: 'INSERT INTO Favorite(article, creator) VALUES(?, ?)',
+  REMOVE: 'DELETE FROM Favorite WHERE article = ? AND creator = ?',
 };
 
 // ! BOOKMARK ---------------------------------------------------------------------------------------
 
 export const BOOKMARK = {
+  GET: {
+    ONE: {
+      CREATOR: 'SELECT creator FROM Bookmark WHERE article = ?',
+    },
+  },
   IS_BOOKMARK:
     'SELECT IF(article, True, False) AS isBookmarked FROM Bookmark WHERE article = ? AND creator = ?',
+  CREATE: 'INSERT INTO Bookmark(article, creator) VALUES(?, ?)',
+  REMOVE: 'DELETE FROM Bookmark WHERE article = ? AND creator = ?',
 };
 
 // ! FOLLOW ---------------------------------------------------------------------------------------

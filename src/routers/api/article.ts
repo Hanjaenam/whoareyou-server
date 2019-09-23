@@ -8,18 +8,22 @@ import {
   patch,
   getCreator,
 } from 'controllers/article';
-import { authRequired } from 'middlewares/common';
+import { authRequired, isMine } from 'middlewares/common';
 import multerS3 from 'middlewares/awsS3';
-import { isMine, removePhotos } from 'middlewares/article';
+import { removePhotos } from 'middlewares/article';
 import comment from './comment';
+import favorite from './favorite';
+import bookmark from './bookmark';
 
 const router = express.Router();
 
 //comment
-router.use(comment);
+router.use(...authRequired, comment);
+router.use(...authRequired, favorite);
+router.use(...authRequired, bookmark);
 
 // 둘러보기 getAll - 권한 풀어주기
-router.get(routes.home, getAll);
+router.get(routes.category, getAll);
 
 // 둘러보기 getOne -  권한 풀어주기
 router.get(routes.id, getOne);
@@ -34,7 +38,13 @@ router.post(
 );
 
 // 권한 필수
-router.delete(routes.id, ...authRequired, isMine, removePhotos, remove);
+router.delete(
+  routes.id,
+  ...authRequired,
+  isMine('article'),
+  removePhotos,
+  remove,
+);
 
 // 권한 필수
 // router.patch(routes.id, patch);

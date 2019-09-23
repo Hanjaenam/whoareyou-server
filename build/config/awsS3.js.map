@@ -1,0 +1,1 @@
+{"version":3,"file":"awsS3.js","sourceRoot":"","sources":["../../src/config/awsS3.ts"],"names":[],"mappings":";;;;;AAAA,sDAA0B;AAE1B,MAAM,MAAM,GAAG;IACb,WAAW,EAAE,OAAO,CAAC,GAAG,CAAC,cAAc;IACvC,eAAe,EAAE,OAAO,CAAC,GAAG,CAAC,cAAc;IAC3C,MAAM,EAAE,gBAAgB;CACzB,CAAC;AAEF,kBAAe,IAAI,iBAAG,CAAC,EAAE,CAAC,MAAM,CAAC,CAAC"}

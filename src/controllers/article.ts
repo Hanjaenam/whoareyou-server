@@ -1,5 +1,5 @@
 import pool from 'database/pool';
-import { USER, ARTICLE, PHOTO } from 'database/queries';
+import { USER, ARTICLE, PHOTO, BOOKMARK } from 'database/queries';
 import { Request, Response, NextFunction } from 'express';
 import { Basic } from 'types/database/article';
 import { checkUpdated, isUpdated, articleDataTemplate } from 'utils';
@@ -11,9 +11,26 @@ export const getAll = (
   req: Request,
   res: Response,
   next: NextFunction,
-): Promise<void> =>
-  pool
-    .query(ARTICLE.GET.ALL.BASIC(req.query.page))
+): Promise<void> => {
+  let query = '';
+  const {
+    query: { page },
+  } = req;
+  switch (req.params.category) {
+    case 'latest':
+      query = ARTICLE.GET.ALL.BASIC(page);
+      break;
+    case 'like':
+      query = ARTICLE.GET.ALL.FAVORITE(page);
+      break;
+    case 'bookmark':
+      query = ARTICLE.GET.ALL.BOOKMARK(page);
+      break;
+    default:
+      throw new Error('article getAll no params');
+  }
+  return pool
+    .query(query)
     .then(async ([rows]) => {
       try {
         const data = await articleDataTemplate(req.user, rows);
@@ -23,6 +40,7 @@ export const getAll = (
       }
     })
     .catch(next);
+};
 
 // article id 사용
 export const getOne = (

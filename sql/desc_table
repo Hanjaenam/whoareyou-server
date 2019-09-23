@@ -29,7 +29,7 @@ CREATE TABLE Photo (
   location  TEXT NOT NULL,
   PRIMARY   KEY(id),
   FOREIGN   KEY(article) REFERENCES Article(id) ON DELETE CASCADE
-)
+);
 
 CREATE TABLE Comment (
   id        INT UNSIGNED AUTO_INCREMENT,
@@ -43,18 +43,18 @@ CREATE TABLE Comment (
 );
 
 CREATE TABLE Favorite (
+  article   INT UNSIGNED,
+  creator   INT UNSIGNED,
+  FOREIGN KEY(creator) REFERENCES User(id) ON DELETE CASCADE,
+  FOREIGN KEY(article) REFERENCES Article(id) ON DELETE CASCADE
+);
+
+CREATE TABLE Bookmark (
   creator   INT UNSIGNED,
   article   INT UNSIGNED,
   FOREIGN KEY(creator) REFERENCES User(id) ON DELETE CASCADE,
   FOREIGN KEY(article) REFERENCES Article(id) ON DELETE CASCADE
-)
-
-CREATE TABLE Bookmark (
-  creator      INT UNSIGNED,
-  article   INT UNSIGNED,
-  FOREIGN KEY(creator) REFERENCES User(id) ON DELETE CASCADE,
-  FOREIGN KEY(article) REFERENCES Article(id) ON DELETE CASCADE
-)
+);
 
 
 

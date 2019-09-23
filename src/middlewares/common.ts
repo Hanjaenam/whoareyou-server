@@ -1,6 +1,11 @@
 import expressJwt from 'config/expressJwt';
 import { Request, Response, NextFunction } from 'express';
 import { ErrorWithStatus } from 'types/error';
+import pool from 'database/pool';
+import { COMMENT, ARTICLE, FAVORITE } from 'database/queries';
+import { OnlyCreator } from 'types/database/article';
+import { Jwt } from 'types/reqUser';
+import { OnlyId } from 'types/database/user';
 
 export const requiredData = (args: string[]) => (
   req: Request,
@@ -44,3 +49,50 @@ export const tokenErrorHandling = (
     : next();
 
 export const authRequired = [expressJwt.required, tokenErrorHandling];
+
+export const isMine = (
+  queryType: 'article' | 'comment' | 'favorite' | 'bookmark',
+): ((req: Request, res: Response, next: NextFunction) => Promise<void>) => {
+  let query = '';
+  let id = '';
+  switch (queryType) {
+    case 'article':
+      query = ARTICLE.GET.ONE.CREATOR;
+      id = 'id';
+      break;
+    case 'comment':
+      query = COMMENT.GET.ONE.CREATOR;
+      id = 'id';
+      break;
+    case 'favorite':
+      query = FAVORITE.GET.ONE.CREATOR;
+      id = 'article';
+      break;
+    case 'bookmark':
+      query = '';
+      id = 'article';
+    default:
+      throw new Error('common Middleware no Params');
+  }
+  return (req: Request, res: Response, next: NextFunction): Promise<void> =>
+    pool
+      .query(query, [id === 'article' ? req.params.articleId : req.params.id])
+      .then(([rows]) =>
+        (rows as OnlyCreator[])[0].creator === (req.user as Jwt).id
+          ? next()
+          : res.status(403).end(),
+      )
+      .catch(next);
+};
+
+export const isExistedArticle = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> =>
+  pool
+    .query(ARTICLE.GET.ONE.ID, [req.params.articleId])
+    .then(([rows]) =>
+      (rows as OnlyId[]).length === 0 ? res.status(204).end() : next(),
+    )
+    .catch(next);
