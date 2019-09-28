@@ -20,7 +20,7 @@ const isProduction = process.env.NODE_ENV === 'production';
 app.set('port', process.env.PORT);
 app.set('env', process.env.NODE_ENV);
 if (process.env.NODE_ENV === 'production') {
-    console.log('✅ cors origin >>', origin);
+    console.log('✅ cors origin >> https://whoru.netlify.com');
     app.use(cors_1.default({ origin: 'https://whoru.netlify.com' }));
 }
 app.use(helmet_1.default());
