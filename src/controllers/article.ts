@@ -1,5 +1,5 @@
 import pool from 'database/pool';
-import { USER, ARTICLE, PHOTO, BOOKMARK } from 'database/queries';
+import { USER, ARTICLE, PHOTO } from 'database/queries';
 import { Request, Response, NextFunction } from 'express';
 import { Basic } from 'types/database/article';
 import { checkUpdated, isUpdated, articleDataTemplate } from 'utils';
