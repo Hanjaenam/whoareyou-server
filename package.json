@@ -5,9 +5,9 @@
   "scripts": {
     "dev": "NODE_ENV=development nodemon --exec ts-node -r ./tsconfig-paths-bootstrap.js src",
     "prebuild": "rm -rf build",
-    "build": "node_modules/.bin/tsc",
+    "build": "tsc",
     "prestart": "yarn build",
-    "start": "NODE_ENV=production node -r ./tsconfig-paths-bootstrap.js build"
+    "start": "NODE_ENV=production node -r ./tsconfig-paths-bootstrap.js build/index.js"
   },
   "dependencies": {
     "@sindresorhus/slugify": "^0.9.1",
