@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "NODE_ENV=development nodemon --exec ts-node -r ./tsconfig-paths-bootstrap.js src",
     "prebuild": "rm -rf build",
-    "build": "tsc",
+    "build": "node_modules/.bin/tsc",
     "prestart": "yarn build",
     "start": "NODE_ENV=production node -r ./tsconfig-paths-bootstrap.js build"
   },
