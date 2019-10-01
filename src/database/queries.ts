@@ -58,7 +58,7 @@ export const ARTICLE = {
 
     ONE: {
       BASIC: 'SELECT id, content, creator, createdAt FROM Article WHERE id = ?',
-      CREATOR: 'SELECT creator FROM Article WHERE id = ?',
+      CREATOR: 'SELECT creator FROM Article WHERE id = ? AND creator = ?',
       ID: 'SELECT id FROM Article WHERE id = ?',
     },
   },
@@ -99,7 +99,7 @@ export const COMMENT = {
         'SELECT C.id, U.name as creator, C.content, C.createdAt From Comment as C, User as U WHERE C.id = ? AND C.creator = ?',
       USING_ARTICLE:
         'SELECT C.id, C.content, U.name as creator, C.createdAt from Comment as C, User as U WHERE C.article=? AND C.creator = U.id ORDER BY createdAt DESC LIMIT 3;',
-      CREATOR: 'SELECT creator FROM Comment WHERE id = ?',
+      CREATOR: 'SELECT creator FROM Comment WHERE id = ? AND creator = ?',
     },
     ALL: {
       USING_ARTICLE:
@@ -116,7 +116,7 @@ export const COMMENT = {
 export const FAVORITE = {
   GET: {
     ONE: {
-      CREATOR: 'SELECT creator FROM Favorite WHERE article = ?',
+      CREATOR: 'SELECT creator FROM Favorite WHERE article = ? AND creator = ?',
     },
   },
   COUNT: 'SELECT count(*) as count FROM Favorite WHERE article = ?',
@@ -133,7 +133,7 @@ export const FAVORITE = {
 export const BOOKMARK = {
   GET: {
     ONE: {
-      CREATOR: 'SELECT creator FROM Bookmark WHERE article = ?',
+      CREATOR: 'SELECT creator FROM Bookmark WHERE article = ? AND creator = ?',
     },
   },
   IS_BOOKMARK:

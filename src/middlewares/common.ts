@@ -77,11 +77,12 @@ export const isMine = (
   }
   return (req: Request, res: Response, next: NextFunction): Promise<void> =>
     pool
-      .query(query, [id === 'article' ? req.params.articleId : req.params.id])
+      .query(query, [
+        id === 'article' ? req.params.articleId : req.params.id,
+        (req.user as Jwt).id,
+      ])
       .then(([rows]) =>
-        (rows as OnlyCreator[])[0].creator === (req.user as Jwt).id
-          ? next()
-          : res.status(403).end(),
+        (rows as OnlyCreator[]).length === 1 ? next() : res.status(403).end(),
       )
       .catch(next);
 };
