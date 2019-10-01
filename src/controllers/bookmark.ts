@@ -18,8 +18,10 @@ export const remove = (
   req: Request,
   res: Response,
   next: NextFunction,
-): Promise<void> =>
-  pool
+): Promise<void> => {
+  console.log((req.user as Jwt).id);
+  return pool
     .query(BOOKMARK.REMOVE, [req.params.articleId, (req.user as Jwt).id])
     .then(([rows]) => checkUpdated(rows, res))
     .catch(next);
+};

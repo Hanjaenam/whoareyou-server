@@ -17,7 +17,6 @@ const NAVER = '/naver';
 const NAVER_CALLBACK = '/naver/callback';
 
 const ARTICLE = '/article';
-const CATEGORY = '/:category';
 
 const COMMENT = '/comment';
 
@@ -27,6 +26,7 @@ const BOOKMARK = '/bookmark';
 const FOLLOW = '/follow';
 
 const ID = '/:id';
+const CATEGORY = '/:category';
 const ARTICLE_ID = '/:articleId';
 const CREATOR = '/:creator';
 const TAG = '/tag';

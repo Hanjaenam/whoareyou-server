@@ -2,7 +2,7 @@ import expressJwt from 'config/expressJwt';
 import { Request, Response, NextFunction } from 'express';
 import { ErrorWithStatus } from 'types/error';
 import pool from 'database/pool';
-import { COMMENT, ARTICLE, FAVORITE } from 'database/queries';
+import { COMMENT, ARTICLE, FAVORITE, BOOKMARK } from 'database/queries';
 import { OnlyCreator } from 'types/database/article';
 import { Jwt } from 'types/reqUser';
 import { OnlyId } from 'types/database/user';
@@ -69,8 +69,9 @@ export const isMine = (
       id = 'article';
       break;
     case 'bookmark':
-      query = '';
+      query = BOOKMARK.GET.ONE.CREATOR;
       id = 'article';
+      break;
     default:
       throw new Error('common Middleware no Params');
   }

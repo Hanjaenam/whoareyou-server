@@ -4,7 +4,7 @@ import sendEmail from 'config/nodemailer';
 import { generateJwt, generatePbkdf2, isUpdated, checkUpdated } from 'utils';
 import { USER } from 'database/queries';
 import { Request, Response, NextFunction } from 'express';
-import { LogIn } from 'types/database/user';
+import { LogIn, Basic } from 'types/database/user';
 import { IdEmlSecrt, OnlyId } from 'types/database/user';
 
 export const logIn = (
@@ -48,9 +48,10 @@ export const register = (
     .then(([rows]) => {
       if (!isUpdated(rows)) return res.status(500).end();
 
-      return sendEmail({ type: 'register', to: email, secret })
-        .then(() => res.status(200).end())
-        .catch(next);
+      return res.status(200).end();
+      // return sendEmail({ type: 'register', to: email, secret })
+      //   .then(() => res.status(200).end())
+      //   .catch(next);
     })
     .catch(next);
 };
@@ -92,9 +93,17 @@ export const verifySecretKey = (
         ])
         .then(([rows2]) => {
           if (!isUpdated(rows2)) return res.status(500).end();
-          return res
-            .json({ token: generateJwt((req.user as IdEmlSecrt).id) })
-            .end();
+          pool
+            .query(USER.GET.ONE.BASIC('id'), (req.user as IdEmlSecrt).id)
+            .then(([rows3]) =>
+              res
+                .json({
+                  ...(rows3 as Basic[])[0],
+                  token: generateJwt((req.user as IdEmlSecrt).id),
+                })
+                .end(),
+            )
+            .catch(next);
         })
         .catch(next);
 

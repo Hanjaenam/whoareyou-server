@@ -19,7 +19,7 @@ export const testConnection = (): Promise<void> =>
       conn.release();
     })
     .catch(error => {
-      if (error) console.log('❌ MySQL connect error: ', error);
+      if (error) console.log('❌ MySQL connect error >> ', error);
       process.exit(1);
     });
 

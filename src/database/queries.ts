@@ -38,10 +38,22 @@ export const ARTICLE = {
         `SELECT id, content, createdAt, creator FROM Article ORDER BY createdAt DESC LIMIT 10 OFFSET ${start}`,
       WR_CREATOR: (start = 0): string =>
         `SELECT id, content, createdAt, creator FROM Article WHERE creator = ? ORDER BY createdAt DESC LIMIT 10 OFFSET ${start}`,
-      FAVORITE: (start = 0): string =>
-        `select A.id, A.content, A.createdAt, A.creator from Favorite as F, Article as A WHERE F.article = A.id ORDER BY createdAt DESC LIMIT 10 OFFSET ${start};`,
-      BOOKMARK: (start = 0): string =>
-        `select A.id, A.content, A.createdAt, A.creator from Bookmark as B, Article as A WHERE B.article = A.id ORDER BY createdAt DESC LIMIT 10 OFFSET ${start};`,
+      FAVORITE: ({
+        start = 0,
+        creator,
+      }: {
+        start: number;
+        creator: number;
+      }): string =>
+        `select A.id, A.content, A.createdAt, A.creator from Favorite as F, Article as A WHERE F.article = A.id AND F.creator=${creator} ORDER BY createdAt DESC LIMIT 10 OFFSET ${start};`,
+      BOOKMARK: ({
+        start = 0,
+        creator,
+      }: {
+        start: number;
+        creator: number;
+      }): string =>
+        `select A.id, A.content, A.createdAt, A.creator from Bookmark as B, Article as A WHERE B.article = A.id AND B.creator=${creator} ORDER BY createdAt DESC LIMIT 10 OFFSET ${start};`,
     },
 
     ONE: {

@@ -6,7 +6,6 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import passport from 'passport';
 import { ErrorWithStatus } from 'types/error';
-import cors from 'cors';
 
 // * app.locals
 // Once set, the value of app.locals properties persist throughout the life of the application,
@@ -18,10 +17,6 @@ const isProduction = process.env.NODE_ENV === 'production';
 //enable pre-flight
 app.set('port', process.env.PORT);
 app.set('env', process.env.NODE_ENV);
-if (process.env.NODE_ENV === 'production') {
-  console.log('✅ cors origin >> https://whoru.netlify.com');
-  app.use(cors({ origin: 'https://whoru.netlify.com' }));
-}
 app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

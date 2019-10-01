@@ -21,10 +21,16 @@ export const getAll = (
       query = ARTICLE.GET.ALL.BASIC(page);
       break;
     case 'like':
-      query = ARTICLE.GET.ALL.FAVORITE(page);
+      query = ARTICLE.GET.ALL.FAVORITE({
+        start: page,
+        creator: (req.user as Jwt).id,
+      });
       break;
     case 'bookmark':
-      query = ARTICLE.GET.ALL.BOOKMARK(page);
+      query = ARTICLE.GET.ALL.BOOKMARK({
+        start: page,
+        creator: (req.user as Jwt).id,
+      });
       break;
     default:
       throw new Error('article getAll no params');

@@ -17,8 +17,7 @@ import bookmark from './bookmark';
 
 const router = express.Router();
 
-//comment
-router.use(...authRequired, comment);
+router.use(comment);
 router.use(...authRequired, favorite);
 router.use(...authRequired, bookmark);
 
