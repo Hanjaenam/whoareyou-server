@@ -8,6 +8,20 @@ import { USER } from 'database/queries';
 import { Passport } from 'types/database/user';
 import { validatePassword } from 'utils';
 
+const isDev = process.env.NODE_ENV === 'development';
+const googleCBUrl = isDev
+  ? routes.api + routes.auth + routes.googleCallback
+  : process.env.PRODUCTION_URL +
+    routes.api +
+    routes.auth +
+    routes.googleCallback;
+const naverCBUrl = isDev
+  ? routes.api + routes.auth + routes.googleCallback
+  : process.env.PRODUCTION_URL +
+    routes.api +
+    routes.auth +
+    routes.naverCallback;
+
 passport.use(
   new LocalStrategy(
     {
@@ -48,7 +62,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_SECRET_KEY,
-      callbackURL: routes.api + routes.auth + routes.googleCallback,
+      callbackURL: googleCBUrl,
     },
     (_, __, profile, done): void => done(null, profile),
   ),
@@ -59,7 +73,7 @@ passport.use(
     {
       clientID: process.env.NAVER_CLIENT_ID,
       clientSecret: process.env.NAVER_SECRET_KEY,
-      callbackURL: routes.api + routes.auth + routes.naverCallback,
+      callbackURL: naverCBUrl,
     },
     (_, __, profile, done): void => done(null, profile),
   ),

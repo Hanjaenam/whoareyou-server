@@ -142,11 +142,13 @@ export const googleCallback = (
         // user is already existed
         if (user.length === 1) {
           const token = generateJwt(user[0].id);
+          const redirectUrl =
+            process.env.NODE_ENV === 'development'
+              ? `http://localhost:3000/#/callback?token=${token}`
+              : `${process.env.PRODUCTION_URL}/#/callback?token=${token}`;
           return pool
             .query(USER.PATCH({ googleId: id }), [user[0].id])
-            .then(() =>
-              res.redirect(`http://localhost:3000/#/callback?token=${token}`),
-            )
+            .then(() => res.redirect(redirectUrl))
             .catch(next);
         }
         // next create user
@@ -182,11 +184,13 @@ export const naverCallback = (
         const user = rows as OnlyId[];
         if (user.length === 1) {
           const token = generateJwt(user[0].id);
+          const redirectUrl =
+            process.env.NODE_ENV === 'development'
+              ? `http://localhost:3000/#/callback?token=${token}`
+              : `${process.env.PRODUCTION_URL}/#/callback?token=${token}`;
           return pool
             .query(USER.PATCH({ naverId: id }), [user[0].id])
-            .then(() =>
-              res.redirect(`http://localhost:3000/#/callback?token=${token}`),
-            )
+            .then(() => res.redirect(redirectUrl))
             .catch(next);
         }
         // create user
