@@ -12,6 +12,7 @@
     "stop": "forever stop build/index.js"
   },
   "dependencies": {
+    "@sendgrid/mail": "^6.4.0",
     "@sindresorhus/slugify": "^0.9.1",
     "@types/cors": "^2.8.6",
     "@types/dotenv": "^6.1.1",
@@ -24,8 +25,6 @@
     "@types/multer-s3": "^2.7.7",
     "@types/mysql2": "types/mysql2",
     "@types/node": "^12.7.2",
-    "@types/nodemailer": "^6.2.1",
-    "@types/nodemailer-mailgun-transport": "^1.4.1",
     "@types/passport": "^1.0.1",
     "@types/passport-google-oauth20": "^2.0.2",
     "@types/passport-local": "^1.0.33",
@@ -42,8 +41,6 @@
     "multer": "^1.4.2",
     "multer-s3": "^2.9.0",
     "mysql2": "^1.6.5",
-    "nodemailer": "^6.3.0",
-    "nodemailer-mailgun-transport": "^1.4.0",
     "passport": "^0.4.0",
     "passport-google-oauth20": "^2.0.0",
     "passport-local": "^1.0.0",

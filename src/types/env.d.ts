@@ -18,6 +18,7 @@ declare namespace NodeJS {
     NAVER_SECRET_KEY: string;
     MAIL_GUN_API_KEY: string;
     MAIL_GUN_DOMAIN: string;
+    SEND_GRID_API_KEY: string;
     AWS_ACCESS_KEY: string;
     AWS_SECRET_KEY: string;
     BUCKET: string;

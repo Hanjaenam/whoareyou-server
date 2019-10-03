@@ -1,6 +1,6 @@
 import passport from 'passport';
 import pool from 'database/pool';
-import sendEmail from 'config/nodemailer';
+import sendEmail from 'config/sendGrid';
 import { generateJwt, generatePbkdf2, isUpdated, checkUpdated } from 'utils';
 import { USER } from 'database/queries';
 import { Request, Response, NextFunction } from 'express';

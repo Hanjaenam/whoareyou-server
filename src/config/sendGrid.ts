@@ -1,15 +1,7 @@
-import nodemailer from 'nodemailer';
-import mailgunTransport from 'nodemailer-mailgun-transport';
+import sgMail from '@sendgrid/mail';
 import { SendMailParams } from 'types/config';
 
-const mailgunOptions = {
-  auth: {
-    api_key: process.env.MAIL_GUN_API_KEY,
-    domain: process.env.MAIL_GUN_DOMAIN,
-  },
-};
-const transport = mailgunTransport(mailgunOptions);
-const client = nodemailer.createTransport(transport);
+sgMail.setApiKey(process.env.SEND_GRID_API_KEY);
 
 export default ({ type, to, secret }: SendMailParams): Promise<any> => {
   const subject =
@@ -21,8 +13,8 @@ export default ({ type, to, secret }: SendMailParams): Promise<any> => {
       ? `원활환 활동을 위해 계정 활성화 코드인 <h1>${secret}</h1> 를 입력해주시길 바랍니다.`
       : `계정 복구를 위해 계정 복구 코드인 <h1>${secret}</h1> 를 입력해주시길 바랍니다.`;
 
-  return client.sendMail({
-    from: 'WhoAreYou@Community.com',
+  return sgMail.send({
+    from: 'j@whoareyou.com',
     to,
     subject,
     html,
