@@ -1,4 +1,3 @@
-import './config/env';
 import './config/passport';
 import routers from './routers';
 import express, { Request, Response, NextFunction } from 'express';

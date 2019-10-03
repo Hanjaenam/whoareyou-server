@@ -3,11 +3,13 @@
   "version": "1.0.0",
   "license": "MIT",
   "scripts": {
-    "dev": "NODE_ENV=development nodemon --exec ts-node -r ./tsconfig-paths-bootstrap.js src",
+    "dev": "NODE_ENV=development NODE_PATH=src nodemon --exec ts-node src",
     "prebuild": "rm -rf build",
     "build": "tsc",
     "prestart": "yarn build",
-    "start": "NODE_ENV=production node -r ./tsconfig-paths-bootstrap.js build/index.js"
+    "start": "NODE_ENV=production NODE_PATH=build forever start build/index.js",
+    "list": "forever list",
+    "stop": "forever stop build/index.js"
   },
   "dependencies": {
     "@sindresorhus/slugify": "^0.9.1",
@@ -33,6 +35,7 @@
     "dotenv": "^8.1.0",
     "express": "^4.17.1",
     "express-jwt": "^5.3.1",
+    "forever": "^1.0.0",
     "helmet": "^3.20.0",
     "jsonwebtoken": "^8.5.1",
     "morgan": "^1.9.1",
