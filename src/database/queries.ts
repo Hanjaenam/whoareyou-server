@@ -96,7 +96,7 @@ export const COMMENT = {
   GET: {
     ONE: {
       USING_CREATE:
-        'SELECT C.id, U.name as creator, C.content, C.createdAt From Comment as C, User as U WHERE C.id = ? AND C.creator = ?',
+        'SELECT C.id, U.name as creator, C.content, C.createdAt From Comment as C, User as U WHERE C.id = ? AND U.id = ?',
       USING_ARTICLE:
         'SELECT C.id, C.content, U.name as creator, C.createdAt from Comment as C, User as U WHERE C.article=? AND C.creator = U.id ORDER BY createdAt DESC LIMIT 3;',
       CREATOR: 'SELECT creator FROM Comment WHERE id = ? AND creator = ?',
@@ -120,10 +120,6 @@ export const FAVORITE = {
     },
   },
   COUNT: 'SELECT count(*) as count FROM Favorite WHERE article = ?',
-
-  IS_LIKED:
-    'SELECT IF(article, True, False) AS isLiked FROM Favorite WHERE article = ? AND creator = ?',
-
   CREATE: 'INSERT INTO Favorite(article, creator) VALUES(?, ?)',
   REMOVE: 'DELETE FROM Favorite WHERE article = ? AND creator = ?',
 };
@@ -136,8 +132,6 @@ export const BOOKMARK = {
       CREATOR: 'SELECT creator FROM Bookmark WHERE article = ? AND creator = ?',
     },
   },
-  IS_BOOKMARK:
-    'SELECT IF(article, True, False) AS isBookmarked FROM Bookmark WHERE article = ? AND creator = ?',
   CREATE: 'INSERT INTO Bookmark(article, creator) VALUES(?, ?)',
   REMOVE: 'DELETE FROM Bookmark WHERE article = ? AND creator = ?',
 };

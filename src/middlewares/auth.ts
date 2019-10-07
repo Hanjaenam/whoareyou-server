@@ -1,7 +1,8 @@
 import pool from 'database/pool';
 import { Request, Response, NextFunction } from 'express';
 import { USER } from 'database/queries';
-import { isUpdated, generateJwt } from 'utils';
+import { isUpdated } from 'utils';
+import { generateJwt } from 'config/jsonwebtoken';
 import { IdEmlSecrt, OnlyId } from 'types/database/user';
 
 export const isNotExistedUser = (

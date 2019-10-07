@@ -1,7 +1,8 @@
 import passport from 'passport';
 import pool from 'database/pool';
 import sendEmail from 'config/sendGrid';
-import { generateJwt, generatePbkdf2, isUpdated, checkUpdated } from 'utils';
+import { generatePbkdf2, isUpdated, checkUpdated } from 'utils';
+import { generateJwt } from 'config/jsonwebtoken';
 import { USER } from 'database/queries';
 import { Request, Response, NextFunction } from 'express';
 import { LogIn, Basic } from 'types/database/user';
@@ -48,10 +49,9 @@ export const register = (
     .then(([rows]) => {
       if (!isUpdated(rows)) return res.status(500).end();
 
-      return res.status(200).end();
-      // return sendEmail({ type: 'register', to: email, secret })
-      //   .then(() => res.status(200).end())
-      //   .catch(next);
+      return sendEmail({ type: 'register', to: email, secret })
+        .then(() => res.status(200).end())
+        .catch(next);
     })
     .catch(next);
 };

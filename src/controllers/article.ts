@@ -20,16 +20,16 @@ export const getAll = (
     case 'latest':
       query = ARTICLE.GET.ALL.BASIC(page);
       break;
-    case 'like':
+    case 'favorite':
       query = ARTICLE.GET.ALL.FAVORITE({
         start: page,
-        creator: (req.user as Jwt).id,
+        creator: (res.locals.user as Jwt).id,
       });
       break;
     case 'bookmark':
       query = ARTICLE.GET.ALL.BOOKMARK({
         start: page,
-        creator: (req.user as Jwt).id,
+        creator: (res.locals.user as Jwt).id,
       });
       break;
     default:
@@ -39,7 +39,7 @@ export const getAll = (
     .query(query)
     .then(async ([rows]) => {
       try {
-        const data = await articleDataTemplate(req.user, rows);
+        const data = await articleDataTemplate(res.locals.user, rows);
         return res.json(data).end();
       } catch (error) {
         return next(error);

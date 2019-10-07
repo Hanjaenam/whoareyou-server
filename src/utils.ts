@@ -1,6 +1,4 @@
 import crypto from 'crypto';
-import jwt from 'jsonwebtoken';
-import { secret } from 'config/env';
 import { RowDataPacket, OkPacket } from 'mysql';
 import { Response } from 'express';
 import { PwdHashSalt } from 'types/database/user';
@@ -33,15 +31,6 @@ export const dbQueryToStr = (obj: Record<string, string | null>): string =>
       return `${key}=${value}`;
     })
     .join();
-
-export const generateJwt = (id: number): string =>
-  jwt.sign(
-    {
-      id,
-    },
-    secret,
-    { expiresIn: '24h' },
-  );
 
 export const generatePbkdf2 = (
   password: string,
@@ -95,12 +84,12 @@ export const articleDataTemplate = async (
   const isLiked =
     user &&
     articles.map(article =>
-      pool.query(FAVORITE.IS_LIKED, [article.id, (user as Jwt).id]),
+      pool.query(FAVORITE.GET.ONE.CREATOR, [article.id, (user as Jwt).id]),
     );
   const isBookmarked =
     user &&
     articles.map(article =>
-      pool.query(BOOKMARK.IS_BOOKMARK, [article.id, (user as Jwt).id]),
+      pool.query(BOOKMARK.GET.ONE.CREATOR, [article.id, (user as Jwt).id]),
     );
 
   try {
@@ -121,9 +110,9 @@ export const articleDataTemplate = async (
       likeNumber: (likeRes[index][0] as LikeNumber[])[0].count,
       commentNumber: (commntNumRes[index][0] as CommentNumber[])[0].count,
       comments: comntRes[index][0] as Comment[],
-      isLiked: user ? (isLikedRes[index][0] as IsLiked[]).length === 1 : false,
+      isLiked: user ? (isLikedRes[index][0] as IsLiked[]).length !== 0 : false,
       isBookmarked: user
-        ? (isBokmkedRes[index][0] as IsBookmarked[]).length === 1
+        ? (isBokmkedRes[index][0] as IsBookmarked[]).length !== 0
         : false,
     }));
     return data;

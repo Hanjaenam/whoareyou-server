@@ -3,6 +3,8 @@ import s3 from 'config/awsS3';
 import { Request, Response, NextFunction } from 'express';
 import { PHOTO } from 'database/queries';
 import { S3 } from 'aws-sdk';
+import jwt from 'jsonwebtoken';
+import { secret } from 'config/env';
 
 export const removePhotos = (
   req: Request,
@@ -28,3 +30,25 @@ export const removePhotos = (
       );
     })
     .catch(next);
+
+export const setLocalsUser = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void => {
+  if (
+    (req.headers.authorization &&
+      req.headers.authorization.split(' ')[0] === 'Token') ||
+    (req.headers.authorization &&
+      req.headers.authorization.split(' ')[0] === 'Bearer')
+  ) {
+    const token = req.headers.authorization.split(' ')[1];
+    try {
+      res.locals.user = jwt.verify(token, secret);
+      return next();
+    } catch (err) {
+      return next(err);
+    }
+  }
+  return next();
+};
