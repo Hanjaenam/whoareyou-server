@@ -10,11 +10,15 @@ export const getAll = (
   req: Request,
   res: Response,
   next: NextFunction,
-): Promise<void> =>
-  pool
-    .query(COMMENT.GET.ALL.USING_ARTICLE, [req.params.articleId])
+): Promise<void> => {
+  const {
+    query: { page = 0 },
+  } = req;
+  return pool
+    .query(COMMENT.GET.ALL(page), [req.params.articleId])
     .then(([rows]) => res.json(rows).end())
     .catch(next);
+};
 
 export const create = (
   req: Request,

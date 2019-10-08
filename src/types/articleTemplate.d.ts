@@ -25,7 +25,9 @@ export interface CommentNumber {
 export interface Comment {
   id: number;
   content: string;
+  creatdAt: string;
   creator: string;
+  creatorId: number;
 }
 export interface IsLiked {
   isLiked: boolean;

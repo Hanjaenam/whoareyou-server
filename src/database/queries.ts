@@ -1,4 +1,5 @@
 import { dbQueryToStr } from 'utils';
+import { ARTICLE_LIMIT, COMMENT_FIRST_LIMIT, COMMENT_LIMIT } from 'constant';
 
 export const USER = {
   GET: {
@@ -34,26 +35,30 @@ export const USER = {
 export const ARTICLE = {
   GET: {
     ALL: {
-      BASIC: (start = 0): string =>
-        `SELECT id, content, createdAt, creator FROM Article ORDER BY createdAt DESC LIMIT 10 OFFSET ${start}`,
-      WR_CREATOR: (start = 0): string =>
-        `SELECT id, content, createdAt, creator FROM Article WHERE creator = ? ORDER BY createdAt DESC LIMIT 10 OFFSET ${start}`,
+      BASIC: (page: number): string =>
+        `SELECT id, content, createdAt, creator FROM Article ORDER BY createdAt DESC LIMIT ${ARTICLE_LIMIT} OFFSET ${page *
+          ARTICLE_LIMIT}`,
+      WR_CREATOR: (page: number): string =>
+        `SELECT id, content, createdAt, creator FROM Article WHERE creator = ? ORDER BY createdAt DESC LIMIT ${ARTICLE_LIMIT} OFFSET ${page *
+          ARTICLE_LIMIT}`,
       FAVORITE: ({
-        start = 0,
+        page,
         creator,
       }: {
-        start: number;
+        page: number;
         creator: number;
       }): string =>
-        `select A.id, A.content, A.createdAt, A.creator from Favorite as F, Article as A WHERE F.article = A.id AND F.creator=${creator} ORDER BY createdAt DESC LIMIT 10 OFFSET ${start};`,
+        `select A.id, A.content, A.createdAt, A.creator from Favorite as F, Article as A WHERE F.article = A.id AND F.creator=${creator} ORDER BY createdAt DESC LIMIT ${ARTICLE_LIMIT} OFFSET ${page *
+          ARTICLE_LIMIT};`,
       BOOKMARK: ({
-        start = 0,
+        page,
         creator,
       }: {
-        start: number;
+        page: number;
         creator: number;
       }): string =>
-        `select A.id, A.content, A.createdAt, A.creator from Bookmark as B, Article as A WHERE B.article = A.id AND B.creator=${creator} ORDER BY createdAt DESC LIMIT 10 OFFSET ${start};`,
+        `select A.id, A.content, A.createdAt, A.creator from Bookmark as B, Article as A WHERE B.article = A.id AND B.creator=${creator} ORDER BY createdAt DESC LIMIT ${ARTICLE_LIMIT} OFFSET ${page *
+          ARTICLE_LIMIT};`,
     },
 
     ONE: {
@@ -96,15 +101,14 @@ export const COMMENT = {
   GET: {
     ONE: {
       USING_CREATE:
-        'SELECT C.id, U.name as creator, C.content, C.createdAt From Comment as C, User as U WHERE C.id = ? AND U.id = ?',
-      USING_ARTICLE:
-        'SELECT C.id, C.content, U.name as creator, C.createdAt from Comment as C, User as U WHERE C.article=? AND C.creator = U.id ORDER BY createdAt DESC LIMIT 3;',
+        'SELECT C.id, C.content, C.createdAt, U.name as creator, U.id as creatorId From Comment as C, User as U WHERE C.id = ? AND U.id = ?',
+      USING_ARTICLE: `SELECT C.id, C.content, C.createdAt, U.name as creator, U.id as creatorId from Comment as C, User as U WHERE C.article=? AND C.creator = U.id ORDER BY createdAt DESC LIMIT ${COMMENT_FIRST_LIMIT};`,
       CREATOR: 'SELECT creator FROM Comment WHERE id = ? AND creator = ?',
     },
-    ALL: {
-      USING_ARTICLE:
-        'SELECT C.id, U.name as creator, C.content, C.createdAt FROM Comment as C, User as U WHERE article=? AND U.id = C.creator ORDER BY createdAt DESC LIMIT 10 OFFSET 3',
-    },
+    ALL: (page: number): string =>
+      `SELECT C.id, C.content, C.createdAt, U.name as creator, U.id as creatorId FROM Comment as C, User as U WHERE article=? AND U.id = C.creator ORDER BY createdAt DESC LIMIT ${ARTICLE_LIMIT} OFFSET ${page *
+        COMMENT_LIMIT +
+        COMMENT_FIRST_LIMIT}`,
   },
   CREATE: 'INSERT INTO Comment(article, creator, content) VALUES(?, ?, ?)',
   REMOVE: 'DELETE FROM Comment WHERE id = ?',

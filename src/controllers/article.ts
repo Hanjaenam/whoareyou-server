@@ -14,7 +14,7 @@ export const getAll = (
 ): Promise<void> => {
   let query = '';
   const {
-    query: { page },
+    query: { page = 0 },
   } = req;
   switch (req.params.category) {
     case 'latest':
@@ -22,13 +22,13 @@ export const getAll = (
       break;
     case 'favorite':
       query = ARTICLE.GET.ALL.FAVORITE({
-        start: page,
+        page,
         creator: (res.locals.user as Jwt).id,
       });
       break;
     case 'bookmark':
       query = ARTICLE.GET.ALL.BOOKMARK({
-        start: page,
+        page,
         creator: (res.locals.user as Jwt).id,
       });
       break;
