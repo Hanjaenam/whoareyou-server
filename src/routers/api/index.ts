@@ -3,14 +3,13 @@ import article from './article';
 import express, { Request, NextFunction, Response } from 'express';
 import routes from 'routes';
 import user from './user';
-import { authRequired } from 'middlewares/common';
 import { QueryError } from 'mysql2';
 
 const router = express.Router();
 
 router.use(routes.auth, auth);
 // ...authRequired : Authorization Header - token 검사
-router.use(routes.user, ...authRequired, user);
+router.use(routes.user, user);
 // ...authRequired : Authorization Header - token 검사
 router.use(routes.article, article);
 
