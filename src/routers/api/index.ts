@@ -1,5 +1,6 @@
 import auth from './auth';
 import article from './article';
+import follow from './follow';
 import express, { Request, NextFunction, Response } from 'express';
 import routes from 'routes';
 import user from './user';
@@ -12,6 +13,8 @@ router.use(routes.auth, auth);
 router.use(routes.user, user);
 // ...authRequired : Authorization Header - token 검사
 router.use(routes.article, article);
+
+router.use(routes.follow, follow);
 
 router.use(
   (err: QueryError, req: Request, res: Response, next: NextFunction): void => {

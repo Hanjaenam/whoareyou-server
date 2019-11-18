@@ -30,6 +30,7 @@ const CATEGORY = '/:category';
 const ARTICLE_ID = '/:articleId';
 const CREATOR = '/:creator';
 const TAG = '/tag';
+const SEARCH = '/search';
 
 export default {
   home: HOME,
@@ -64,4 +65,5 @@ export default {
   articleId: ARTICLE_ID,
   creator: CREATOR,
   tag: TAG,
+  search: SEARCH,
 };

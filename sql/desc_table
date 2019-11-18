@@ -56,6 +56,13 @@ CREATE TABLE Bookmark (
   FOREIGN KEY(article) REFERENCES Article(id) ON DELETE CASCADE
 );
 
+CREATE TABLE Follow (
+  who       INT UNSIGNED,
+  whom      INT UNSIGNED,
+  FOREIGN KEY(who) REFERENCES User(id) ON DELETE CASCADE,
+  FOREIGN KEY(whom) REFERENCES User(id) ON DELETE CASCADE
+);
+
 
 
 
@@ -80,12 +87,5 @@ CREATE TABLE Tag (
   article   BINARY(16),
   name      VARCHAR(20) NOT NULL,
   PRIMARY KEY(id),
-  FOREIGN KEY(article) REFERENCES Article(id) ON DELETE SET NULL
-);
-
-CREATE TABLE Favorite (
-  user    BINARY(16),
-  article BINARY(16),
-  FOREIGN KEY(user) REFERENCES User(id) ON DELETE SET NULL,
   FOREIGN KEY(article) REFERENCES Article(id) ON DELETE SET NULL
 );

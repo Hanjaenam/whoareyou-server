@@ -4,14 +4,17 @@ import { ARTICLE_LIMIT, COMMENT_FIRST_LIMIT, COMMENT_LIMIT } from 'constant';
 export const USER = {
   GET: {
     ONE: {
-      BASIC: (key: 'id' | 'email'): string =>
-        `SELECT id, email, name, avatar, introduce, createdAt From User WHERE ${key}=?`,
+      BASIC:
+        'SELECT id, email, name, avatar, introduce, createdAt From User WHERE id=?',
+      FOLLOW:
+        'SELECT U.id, U.email, U.name, U.introduce, U.avatar, (SELECT who IS NOT NULL FROM Follow WHERE who=? AND whom=?) AS isFollow FROM User as U WHERE U.id = ?',
       ID_EML_SECRT_WR_EML: 'SELECT id, email, secret FROM User WHERE email = ?',
       ID_WR_EML: 'SELECT id FROM User WHERE email = ?',
       AVT_WR_ID: 'SELECT avatar FROM User WHERE id = ?',
       ID_NM_AVT_WR_ID: 'SELECT id, name, avatar FROM User WHERE id = ?',
     },
-    ALL: 'SELECT id, name, avatar, introduce FROM User',
+    ALL:
+      'SELECT id, name, introduce, avatar, (SELECT who IS NOT NULL FROM Follow WHERE who=? AND whom=id) AS isFollow FROM User as U WHERE id != ?',
   },
 
   PASSPORT:
@@ -28,6 +31,8 @@ export const USER = {
   CREATE_NAVER:
     'INSERT INTO User(email, name, naverId, avatar) VALUES(?, ?, ?, ?)',
   VALIDATE_PASSWORD: 'select salt, hash FROM User WHERE id = ?',
+  SEARCH:
+    'select id, name, avatar, concat(LEFT(introduce, 17), "...") from User WHERE name LIKE ?',
 };
 
 // ! ARTICLE ---------------------------------------------------------------------------------------
@@ -143,7 +148,11 @@ export const BOOKMARK = {
 // ! FOLLOW ---------------------------------------------------------------------------------------
 
 export const FOLLOW = {
-  CREATE: 'INSERT INTO Follow(fromUser, toUser) VALUES(?, ?)',
+  GET: {
+    ALL:
+      'select U.id, U.name, U.avatar from follow as F, User as U where F.who = ? AND F.whom = U.id',
+  },
+  CREATE: 'INSERT INTO Follow(who, whom) VALUES(?, ?)',
 
-  REMOVE: 'DELETE FROM Follow WHERE fromUser=? AND toUser=?',
+  REMOVE: 'DELETE FROM Follow WHERE who=? AND whom=?',
 };

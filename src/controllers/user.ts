@@ -8,17 +8,35 @@ import {
 import { Basic } from 'types/database/user';
 import { Jwt } from 'types/reqUser';
 import { Request, Response, NextFunction } from 'express';
-import { USER, ARTICLE } from 'database/queries';
+import { USER, ARTICLE, FOLLOW } from 'database/queries';
+import expressJwt from 'config/expressJwt';
 
-export const getMe = (
+export const getAll = (
   req: Request,
   res: Response,
   next: NextFunction,
 ): Promise<void> =>
   pool
-    .query(USER.GET.ONE.BASIC('id'), [(req.user as Jwt).id])
-    .then(([rows]) => res.json((rows as Basic[])[0]).end())
+    .query(USER.GET.ALL, [(req.user as Jwt).id, (req.user as Jwt).id])
+    .then(([rows]) => res.json(rows).end())
     .catch(next);
+
+export const getMe = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  return pool
+    .query(USER.GET.ONE.BASIC, [(req.user as Jwt).id])
+    .then(([rows]) =>
+      pool
+        .query(FOLLOW.GET.ALL, [(req.user as Jwt).id])
+        .then(([rows2]) =>
+          res.json({ ...(rows as Basic[])[0], follows: rows2 }).end(),
+        ),
+    )
+    .catch(next);
+};
 
 export const getArticle = (
   req: Request,
@@ -37,26 +55,19 @@ export const getArticle = (
     })
     .catch(next);
 
-// export const getAll = (
-//   _: Request,
-//   res: Response,
-//   next: NextFunction,
-// ): Promise<void> =>
-//   pool
-//     .query(USER.GET_ALL)
-//     .then(([rows]) => res.json(rows).end())
-//     .catch(next);
-
 export const getOne = (
   req: Request,
   res: Response,
   next: NextFunction,
 ): Promise<void> =>
   pool
-    .query(USER.GET.ONE.BASIC('id'), [req.params.id])
+    .query(USER.GET.ONE.FOLLOW, [
+      (req.user as Jwt).id,
+      req.params.id,
+      req.params.id,
+    ])
     .then(([rows]) => res.json((rows as Basic[])[0]).end())
     .catch(next);
-
 export const remove = (
   req: Request,
   res: Response,
@@ -112,4 +123,14 @@ export const patchAvatar = (
       if (!isUpdated(rows)) return res.status(500).end();
       return res.json(req.file.location).end();
     })
+    .catch(next);
+
+export const search = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> =>
+  pool
+    .query(USER.SEARCH, ['%' + req.query.name + '%'])
+    .then(([rows]) => res.json(rows).end())
     .catch(next);

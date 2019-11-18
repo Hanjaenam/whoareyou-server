@@ -2,10 +2,11 @@ import pool from 'database/pool';
 import { Request, Response, NextFunction } from 'express';
 import { USER } from 'database/queries';
 import { validatePassword } from 'utils';
-import { HashSalt } from 'types/database/user';
+import { HashSalt, Basic } from 'types/database/user';
 import { Jwt } from 'types/reqUser';
 import { OnlyAvatar } from 'types/database/user';
 import s3 from 'config/awsS3';
+import { ErrorWithStatus } from 'types/error';
 
 export const isValidPassword = (
   req: Request,
@@ -54,3 +55,16 @@ export const removePreAvatar = (
       return next();
     })
     .catch(next);
+
+export const getOneCheckLogin = (
+  err: ErrorWithStatus,
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void | Promise<void> =>
+  err.name === 'UnauthorizedError'
+    ? pool
+        .query(USER.GET.ONE.BASIC, [req.params.id])
+        .then(([rows]) => res.json((rows as Basic[])[0]).end())
+        .catch(next)
+    : next();

@@ -3,7 +3,7 @@ import pool from 'database/pool';
 import sendEmail from 'config/sendGrid';
 import { generatePbkdf2, isUpdated, checkUpdated } from 'utils';
 import { generateJwt } from 'config/jsonwebtoken';
-import { USER } from 'database/queries';
+import { USER, FOLLOW } from 'database/queries';
 import { Request, Response, NextFunction } from 'express';
 import { LogIn, Basic } from 'types/database/user';
 import { IdEmlSecrt, OnlyId } from 'types/database/user';
@@ -29,8 +29,11 @@ export const logIn = (
           .json({ message: '보안코드를 입력하시지 않으셨습니다.' })
           .end();
       const token = generateJwt(user.id);
-      const { valid, ...rest } = user;
-      return res.json({ ...rest, token }).end();
+      const { valid, ...userInfo } = user;
+      return pool
+        .query(FOLLOW.GET.ALL, [userInfo.id])
+        .then(([rows]) => res.json({ token, follows: rows, ...userInfo }).end())
+        .catch(next);
     },
   )(req, res, next);
 
@@ -94,7 +97,7 @@ export const verifySecretKey = (
         .then(([rows2]) => {
           if (!isUpdated(rows2)) return res.status(500).end();
           pool
-            .query(USER.GET.ONE.BASIC('id'), (req.user as IdEmlSecrt).id)
+            .query(USER.GET.ONE.BASIC, (req.user as IdEmlSecrt).id)
             .then(([rows3]) =>
               res
                 .json({

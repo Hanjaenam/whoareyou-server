@@ -8,18 +8,28 @@ import {
   patchAvatar,
   changePassword,
   getArticle,
+  getAll,
+  search,
 } from 'controllers/user';
 import { haveAtLeastOneData, requiredData } from 'middlewares/common';
-import { isValidPassword, removePreAvatar } from 'middlewares/user';
+import {
+  isValidPassword,
+  removePreAvatar,
+  getOneCheckLogin,
+} from 'middlewares/user';
 import multerS3 from 'middlewares/awsS3';
 import { authRequired } from 'middlewares/common';
+import expressJwt from 'config/expressJwt';
 
 const router = express.Router();
+router.get(routes.search, search);
 // 내 정보 가져오기
 router.get(routes.me, ...authRequired, getMe);
 
+router.get(routes.home, ...authRequired, getAll);
+
 // get 유저 정보
-router.get(routes.id, getOne);
+router.get(routes.id, expressJwt.required, getOneCheckLogin, getOne);
 router.get(routes.id + routes.article, getArticle);
 
 // 회원탈퇴
